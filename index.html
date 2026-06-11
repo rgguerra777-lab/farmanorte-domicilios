@@ -120,12 +120,13 @@ body {
   flex: 1;
   border: none;
   background: none;
-  padding: 14px 8px;
-  font-size: 0.88rem;
+  padding: 13px 4px;
+  font-size: 0.78rem;
   font-weight: 700;
   color: var(--text-muted);
   cursor: pointer;
   border-bottom: 3px solid transparent;
+  white-space: nowrap;
 }
 .tab.active { color: var(--primary); border-bottom-color: var(--accent); }
 
@@ -359,17 +360,17 @@ body {
   transform: translateX(-50%) translateY(20px);
   background: #1e293b;
   color: white;
-  padding: 12px 24px;
-  border-radius: 50px;
-  font-size: 0.9rem;
+  padding: 12px 22px;
+  border-radius: 18px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  text-align: center;
+  line-height: 1.4;
   opacity: 0;
   transition: all 0.3s ease;
   pointer-events: none;
   z-index: 30;
-  white-space: nowrap;
-  max-width: 90vw;
-  text-overflow: ellipsis;
-  overflow: hidden;
+  max-width: 88vw;
 }
 .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
@@ -443,6 +444,142 @@ body {
   font-size: 1rem;
   cursor: pointer;
 }
+
+/* Modal "registrar domicilio" con foto */
+.btn-camera {
+  width: 100%;
+  padding: 18px;
+  border-radius: 14px;
+  border: none;
+  background: var(--accent);
+  color: var(--primary-dark);
+  font-size: 1.05rem;
+  font-weight: 800;
+  cursor: pointer;
+  margin-bottom: 10px;
+  box-shadow: 0 4px 14px rgba(0,175,238,0.35);
+  transition: transform 0.1s;
+}
+.btn-camera:active { transform: scale(0.98); }
+.btn-skip {
+  width: 100%;
+  padding: 12px;
+  border-radius: 10px;
+  border: none;
+  background: none;
+  color: var(--text-muted);
+  font-size: 0.92rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+/* Insignia de foto en cada domicilio */
+.dom-actions { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+.photo-badge {
+  background: #eef2f7;
+  border: none;
+  color: #94a3b8;
+  font-size: 1.05rem;
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  transition: transform 0.1s;
+}
+.photo-badge:active { transform: scale(0.92); }
+.photo-badge.has-photo {
+  background: var(--accent);
+  color: white;
+  box-shadow: 0 2px 8px rgba(0,175,238,0.35);
+}
+
+/* Galería de recibos */
+.recibos-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin: 12px 16px 16px;
+}
+.recibo-cell {
+  background: white;
+  border: none;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  animation: fadeIn 0.25s ease;
+}
+.recibo-thumb-wrap {
+  width: 100%;
+  aspect-ratio: 1;
+  background: #e2e8f0;
+  overflow: hidden;
+}
+.recibo-thumb { width: 100%; height: 100%; object-fit: cover; display: block; }
+.recibo-time { font-size: 0.68rem; color: var(--text-muted); padding: 6px 4px; text-align: center; font-weight: 600; }
+
+/* Visor de foto (lightbox) */
+.photo-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15,23,42,0.94);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 60;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s;
+  padding: 20px;
+}
+.photo-overlay.open { opacity: 1; pointer-events: all; }
+.photo-viewer {
+  width: 100%;
+  max-width: 460px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+.photo-close {
+  align-self: flex-end;
+  background: rgba(255,255,255,0.15);
+  border: none;
+  color: white;
+  width: 42px; height: 42px;
+  border-radius: 50%;
+  font-size: 1.3rem;
+  cursor: pointer;
+  margin-bottom: 12px;
+}
+.photo-img-wrap {
+  width: 100%;
+  border-radius: 14px;
+  overflow: hidden;
+  background: #1e293b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 160px;
+}
+.photo-img { width: 100%; display: block; }
+.photo-loading { color: rgba(255,255,255,0.7); padding: 50px 20px; font-size: 0.9rem; font-weight: 600; }
+.photo-date { color: white; margin: 14px 0; font-size: 0.92rem; font-weight: 700; text-align: center; }
+.photo-actions { display: flex; gap: 12px; }
+.btn-retake, .btn-photo-delete {
+  flex: 1;
+  padding: 14px;
+  border-radius: 10px;
+  border: none;
+  font-size: 0.92rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+.btn-retake { background: rgba(255,255,255,0.15); color: white; }
+.btn-photo-delete { background: var(--danger); color: white; }
 </style>
 </head>
 <body>
@@ -473,6 +610,7 @@ body {
 
   <nav class="tabs">
     <button class="tab active" data-tab="registro">📋 Registro</button>
+    <button class="tab" data-tab="recibos">📷 Recibos</button>
     <button class="tab" data-tab="stats">📊 Estadísticas</button>
   </nav>
 
@@ -517,6 +655,16 @@ body {
         <ul id="domicilioList" class="domicilio-list"></ul>
         <p id="emptyMsg" class="empty-msg">Aún no has registrado domicilios este mes.</p>
       </section>
+    </section>
+
+    <section id="tab-recibos" class="tab-panel" hidden>
+      <div class="month-nav">
+        <button id="prevMonthR" class="nav-btn" aria-label="Mes anterior">‹</button>
+        <div class="month-label" id="monthLabelR">Junio 2026</div>
+        <button id="nextMonthR" class="nav-btn" aria-label="Mes siguiente">›</button>
+      </div>
+      <div id="recibosGrid" class="recibos-grid"></div>
+      <p id="recibosEmpty" class="empty-msg">Aún no hay fotos de recibos guardadas este mes. Toca el 📷 junto a un domicilio para agregar una.</p>
     </section>
 
     <section id="tab-stats" class="tab-panel" hidden>
@@ -574,6 +722,32 @@ body {
       </div>
       <hr class="modal-divider">
       <button id="logoutBtn" class="btn-logout">Cerrar sesión</button>
+    </div>
+  </div>
+
+  <input type="file" id="photoInput" accept="image/*" capture="environment" hidden>
+
+  <div id="addModal" class="modal-overlay">
+    <div class="modal">
+      <h2>Registrar domicilio</h2>
+      <p class="hint">Toma una foto del recibo para guardar la evidencia. Podrás verla cuando quieras en la pestaña "Recibos".</p>
+      <button id="takePhotoBtn" class="btn-camera">📸 Tomar foto del recibo</button>
+      <button id="skipPhotoBtn" class="btn-skip">Registrar sin foto</button>
+    </div>
+  </div>
+
+  <div id="photoModal" class="photo-overlay">
+    <div class="photo-viewer">
+      <button id="closePhotoBtn" class="photo-close" aria-label="Cerrar">✕</button>
+      <div class="photo-img-wrap">
+        <span id="photoLoading" class="photo-loading">Cargando...</span>
+        <img id="photoImg" class="photo-img" alt="Recibo" hidden>
+      </div>
+      <p id="photoDate" class="photo-date"></p>
+      <div class="photo-actions">
+        <button id="retakePhotoBtn" class="btn-retake">🔄 Cambiar foto</button>
+        <button id="deletePhotoBtn" class="btn-photo-delete">🗑️ Eliminar foto</button>
+      </div>
     </div>
   </div>
 </div>
@@ -648,6 +822,96 @@ function getRegistros(monthKey) {
   return state.registros[monthKey] || [];
 }
 
+/* ---------- Fotos de recibos (IndexedDB) ---------- */
+
+const PHOTO_DB_NAME = 'farmanorte_fotos';
+const PHOTO_STORE = 'fotos';
+
+function openPhotoDB() {
+  return new Promise((resolve, reject) => {
+    const req = indexedDB.open(PHOTO_DB_NAME, 1);
+    req.onupgradeneeded = () => req.result.createObjectStore(PHOTO_STORE);
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = () => reject(req.error);
+  });
+}
+
+async function savePhoto(id, dataUrl) {
+  const db = await openPhotoDB();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(PHOTO_STORE, 'readwrite');
+    tx.objectStore(PHOTO_STORE).put(dataUrl, id);
+    tx.oncomplete = () => resolve();
+    tx.onerror = () => reject(tx.error);
+  });
+}
+
+async function getPhoto(id) {
+  const db = await openPhotoDB();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(PHOTO_STORE, 'readonly');
+    const req = tx.objectStore(PHOTO_STORE).get(id);
+    req.onsuccess = () => resolve(req.result || null);
+    req.onerror = () => reject(req.error);
+  });
+}
+
+async function deletePhoto(id) {
+  const db = await openPhotoDB();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(PHOTO_STORE, 'readwrite');
+    tx.objectStore(PHOTO_STORE).delete(id);
+    tx.oncomplete = () => resolve();
+    tx.onerror = () => reject(tx.error);
+  });
+}
+
+function compressImage(file, maxSize = 1000, quality = 0.7) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const img = new Image();
+      img.onload = () => {
+        let { width, height } = img;
+        if (width > maxSize || height > maxSize) {
+          if (width >= height) {
+            height = Math.round(height * (maxSize / width));
+            width = maxSize;
+          } else {
+            width = Math.round(width * (maxSize / height));
+            height = maxSize;
+          }
+        }
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+        canvas.getContext('2d').drawImage(img, 0, 0, width, height);
+        resolve(canvas.toDataURL('image/jpeg', quality));
+      };
+      img.onerror = reject;
+      img.src = reader.result;
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+function setFotoFlag(id, val) {
+  for (const key in state.registros) {
+    const r = state.registros[key].find(r => r.id === id);
+    if (r) { r.foto = val; break; }
+  }
+  saveState();
+}
+
+function findRegistro(id) {
+  for (const key in state.registros) {
+    const r = state.registros[key].find(r => r.id === id);
+    if (r) return r;
+  }
+  return null;
+}
+
 /* ---------- Sesión / login ---------- */
 
 function loadSession() {
@@ -707,8 +971,10 @@ document.querySelectorAll('.tab').forEach(btn => {
     btn.classList.add('active');
     const target = btn.dataset.tab;
     document.getElementById('tab-registro').hidden = target !== 'registro';
+    document.getElementById('tab-recibos').hidden = target !== 'recibos';
     document.getElementById('tab-stats').hidden = target !== 'stats';
     if (target === 'stats') renderStats();
+    if (target === 'recibos') renderRecibos();
     updateFabVisibility();
   });
 });
@@ -760,20 +1026,27 @@ function render() {
         <span class="dom-num">${i + 1}</span>
         <span class="dom-time">${timeStr}</span>
       </div>
-      <button class="del-btn" data-id="${r.id}" aria-label="Eliminar">🗑️</button>
+      <div class="dom-actions">
+        <button class="photo-badge ${r.foto ? 'has-photo' : ''}" data-id="${r.id}" aria-label="${r.foto ? 'Ver foto del recibo' : 'Agregar foto del recibo'}">📷</button>
+        <button class="del-btn" data-id="${r.id}" aria-label="Eliminar">🗑️</button>
+      </div>
     `;
     list.appendChild(li);
   });
 }
 
-function addDomicilio() {
+async function addDomicilio(photoDataUrl) {
   const monthKey = currentMonthKey();
   if (!state.registros[monthKey]) state.registros[monthKey] = [];
-  state.registros[monthKey].push({ id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6), timestamp: Date.now() });
+  const id = Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+  state.registros[monthKey].push({ id, timestamp: Date.now(), foto: !!photoDataUrl });
   saveState();
+  if (photoDataUrl) await savePhoto(id, photoDataUrl);
   viewedMonth = monthKey;
   render();
-  showToast(`Domicilio registrado ✅ · Van ${state.registros[monthKey].length} este mes`);
+  if (activeTab() === 'recibos') renderRecibos();
+  const sufijo = photoDataUrl ? ' con foto 📸' : '';
+  showToast(`Domicilio registrado${sufijo} ✅ · Van ${state.registros[monthKey].length} este mes`);
 }
 
 function deleteDomicilio(id) {
@@ -781,9 +1054,12 @@ function deleteDomicilio(id) {
   const idx = registros.findIndex(r => r.id === id);
   if (idx === -1) return;
   if (!confirm('¿Eliminar este domicilio?')) return;
+  const hadPhoto = registros[idx].foto;
   registros.splice(idx, 1);
   saveState();
+  if (hadPhoto) deletePhoto(id).catch(() => {});
   render();
+  if (activeTab() === 'recibos') renderRecibos();
 }
 
 let toastTimeout;
@@ -795,23 +1071,37 @@ function showToast(msg) {
   toastTimeout = setTimeout(() => toast.classList.remove('show'), 2200);
 }
 
-document.getElementById('addBtn').addEventListener('click', addDomicilio);
+document.getElementById('addBtn').addEventListener('click', () => {
+  document.getElementById('addModal').classList.add('open');
+});
 
 document.getElementById('domicilioList').addEventListener('click', e => {
-  const btn = e.target.closest('.del-btn');
-  if (btn) deleteDomicilio(btn.dataset.id);
+  const del = e.target.closest('.del-btn');
+  if (del) { deleteDomicilio(del.dataset.id); return; }
+  const photoBtn = e.target.closest('.photo-badge');
+  if (photoBtn) {
+    const id = photoBtn.dataset.id;
+    if (photoBtn.classList.contains('has-photo')) {
+      openPhotoModal(id);
+    } else {
+      pendingPhotoTargetId = id;
+      document.getElementById('photoInput').click();
+    }
+  }
 });
 
 document.getElementById('prevMonth').addEventListener('click', () => {
   if (viewedMonth > minMonthKey()) {
     viewedMonth = monthKeyOffset(viewedMonth, -1);
     render();
+    renderRecibos();
   }
 });
 document.getElementById('nextMonth').addEventListener('click', () => {
   if (viewedMonth < currentMonthKey()) {
     viewedMonth = monthKeyOffset(viewedMonth, 1);
     render();
+    renderRecibos();
   }
 });
 
@@ -906,6 +1196,155 @@ function renderStats() {
   }));
   renderBarChart(document.getElementById('chartMes'), monthItems, { showValue: true });
 }
+
+/* ---------- Recibos (fotos) ---------- */
+
+let pendingPhotoTargetId = null;
+let pendingNewDomicilio = false;
+let photoModalOpenId = null;
+
+function renderRecibos() {
+  document.getElementById('monthLabelR').textContent = monthLabel(viewedMonth);
+  document.getElementById('prevMonthR').disabled = viewedMonth <= minMonthKey();
+  document.getElementById('nextMonthR').disabled = viewedMonth >= currentMonthKey();
+
+  const registros = getRegistros(viewedMonth).filter(r => r.foto);
+  const grid = document.getElementById('recibosGrid');
+  grid.innerHTML = '';
+  document.getElementById('recibosEmpty').style.display = registros.length === 0 ? 'block' : 'none';
+
+  registros.forEach(r => {
+    const cell = document.createElement('button');
+    cell.className = 'recibo-cell';
+    cell.dataset.id = r.id;
+    const date = new Date(r.timestamp);
+    const timeStr = date.toLocaleString('es-CO', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
+    cell.innerHTML = `<div class="recibo-thumb-wrap"><img class="recibo-thumb" alt="Recibo"></div><span class="recibo-time">${timeStr}</span>`;
+    grid.appendChild(cell);
+    getPhoto(r.id).then(dataUrl => {
+      if (dataUrl) cell.querySelector('.recibo-thumb').src = dataUrl;
+    });
+  });
+}
+
+document.getElementById('recibosGrid').addEventListener('click', e => {
+  const cell = e.target.closest('.recibo-cell');
+  if (cell) openPhotoModal(cell.dataset.id);
+});
+
+document.getElementById('prevMonthR').addEventListener('click', () => {
+  if (viewedMonth > minMonthKey()) {
+    viewedMonth = monthKeyOffset(viewedMonth, -1);
+    render();
+    renderRecibos();
+  }
+});
+document.getElementById('nextMonthR').addEventListener('click', () => {
+  if (viewedMonth < currentMonthKey()) {
+    viewedMonth = monthKeyOffset(viewedMonth, 1);
+    render();
+    renderRecibos();
+  }
+});
+
+/* ---------- Visor de foto (lightbox) ---------- */
+
+async function openPhotoModal(id) {
+  photoModalOpenId = id;
+  const overlay = document.getElementById('photoModal');
+  const img = document.getElementById('photoImg');
+  const loading = document.getElementById('photoLoading');
+  img.hidden = true;
+  img.src = '';
+  loading.hidden = false;
+
+  const registro = findRegistro(id);
+  if (registro) {
+    const date = new Date(registro.timestamp);
+    document.getElementById('photoDate').textContent = date.toLocaleString('es-CO', {
+      day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit'
+    });
+  }
+
+  overlay.classList.add('open');
+
+  const dataUrl = await getPhoto(id);
+  loading.hidden = true;
+  if (dataUrl) {
+    img.src = dataUrl;
+    img.hidden = false;
+  }
+}
+
+function closePhotoModal() {
+  document.getElementById('photoModal').classList.remove('open');
+  photoModalOpenId = null;
+}
+
+document.getElementById('closePhotoBtn').addEventListener('click', closePhotoModal);
+document.getElementById('photoModal').addEventListener('click', e => {
+  if (e.target.id === 'photoModal') closePhotoModal();
+});
+
+document.getElementById('retakePhotoBtn').addEventListener('click', () => {
+  pendingPhotoTargetId = photoModalOpenId;
+  document.getElementById('photoInput').click();
+});
+
+document.getElementById('deletePhotoBtn').addEventListener('click', async () => {
+  if (!confirm('¿Eliminar esta foto?')) return;
+  const id = photoModalOpenId;
+  await deletePhoto(id);
+  setFotoFlag(id, false);
+  closePhotoModal();
+  render();
+  if (activeTab() === 'recibos') renderRecibos();
+  showToast('Foto eliminada 🗑️');
+});
+
+/* ---------- Modal "registrar domicilio" ---------- */
+
+document.getElementById('takePhotoBtn').addEventListener('click', () => {
+  pendingNewDomicilio = true;
+  document.getElementById('photoInput').click();
+});
+
+document.getElementById('skipPhotoBtn').addEventListener('click', () => {
+  document.getElementById('addModal').classList.remove('open');
+  addDomicilio(null);
+});
+
+document.getElementById('addModal').addEventListener('click', e => {
+  if (e.target.id === 'addModal') document.getElementById('addModal').classList.remove('open');
+});
+
+document.getElementById('photoInput').addEventListener('change', async e => {
+  const file = e.target.files[0];
+  e.target.value = '';
+  if (!file) {
+    pendingNewDomicilio = false;
+    pendingPhotoTargetId = null;
+    return;
+  }
+  const dataUrl = await compressImage(file);
+
+  if (pendingNewDomicilio) {
+    pendingNewDomicilio = false;
+    document.getElementById('addModal').classList.remove('open');
+    await addDomicilio(dataUrl);
+    return;
+  }
+
+  const targetId = pendingPhotoTargetId;
+  pendingPhotoTargetId = null;
+  if (!targetId) return;
+  await savePhoto(targetId, dataUrl);
+  setFotoFlag(targetId, true);
+  render();
+  if (activeTab() === 'recibos') renderRecibos();
+  if (photoModalOpenId === targetId) await openPhotoModal(targetId);
+  showToast('Foto guardada ✅');
+});
 
 /* ---------- Configuración ---------- */
 
