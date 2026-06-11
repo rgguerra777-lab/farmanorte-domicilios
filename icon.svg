@@ -1,4 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
-  <rect width="100" height="100" rx="20" fill="#0d9488"/>
-  <text x="50" y="65" font-size="52" text-anchor="middle">🏍️</text>
+  <rect width="100" height="100" rx="22" fill="#003399"/>
+  <rect x="30" y="14" width="34" height="9" rx="4" fill="#00afee"/>
+  <rect x="26" y="22" width="48" height="12" rx="3" fill="#ffffff"/>
+  <rect x="26" y="22" width="12" height="56" rx="3" fill="#ffffff"/>
+  <rect x="26" y="44" width="36" height="12" rx="3" fill="#ffffff"/>
 </svg>

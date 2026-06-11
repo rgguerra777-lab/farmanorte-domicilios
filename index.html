@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<meta name="theme-color" content="#0d9488">
+<meta name="theme-color" content="#003399">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Domicilios">
@@ -13,9 +13,11 @@
 <link rel="apple-touch-icon" href="icon.svg">
 <style>
 :root {
-  --primary: #0d9488;
-  --primary-dark: #0f766e;
-  --primary-light: #ccfbf1;
+  --primary: #003399;
+  --primary-dark: #00266e;
+  --accent: #00afee;
+  --accent-dark: #0090c7;
+  --warn: #f59e0b;
   --bg: #f1f5f9;
   --card-bg: #ffffff;
   --text: #1e293b;
@@ -32,20 +34,70 @@ body {
   padding-bottom: 110px;
 }
 
+/* Login screen */
+.login-screen {
+  position: fixed;
+  inset: 0;
+  background: var(--primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  z-index: 100;
+}
+.login-card {
+  background: white;
+  border-radius: 20px;
+  padding: 28px 24px;
+  width: 100%;
+  max-width: 380px;
+  text-align: center;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+}
+.login-logo { width: 100%; max-width: 260px; border-radius: 8px; margin-bottom: 18px; }
+.login-card h1 { font-size: 1.15rem; margin-bottom: 18px; color: var(--text); }
+.login-card label {
+  display: block;
+  text-align: left;
+  margin-bottom: 14px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+.login-card input {
+  display: block;
+  width: 100%;
+  margin-top: 6px;
+  padding: 12px;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  font-size: 1rem;
+  color: var(--text);
+  font-weight: 400;
+}
+.login-error {
+  color: var(--danger);
+  font-size: 0.85rem;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+
+/* App */
 .topbar {
-  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-  color: white;
-  padding: 18px 20px;
-  padding-top: max(18px, env(safe-area-inset-top));
+  background: var(--primary);
+  padding: 12px 16px;
+  padding-top: max(12px, env(safe-area-inset-top));
   display: flex;
   justify-content: space-between;
   align-items: center;
   position: sticky;
   top: 0;
   z-index: 10;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
 }
-.brand { font-size: 1.25rem; font-weight: 700; display: flex; align-items: center; gap: 10px; }
+.header-logo { height: 34px; display: block; border-radius: 4px; }
+.header-actions { display: flex; align-items: center; gap: 10px; }
+.greeting { color: white; font-size: 0.85rem; font-weight: 600; max-width: 110px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .icon-btn {
   background: rgba(255,255,255,0.18);
   border: none;
@@ -54,8 +106,28 @@ body {
   width: 44px; height: 44px;
   border-radius: 12px;
   cursor: pointer;
+  flex-shrink: 0;
 }
 .icon-btn:active { background: rgba(255,255,255,0.3); }
+
+/* Tabs */
+.tabs {
+  display: flex;
+  background: white;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+}
+.tab {
+  flex: 1;
+  border: none;
+  background: none;
+  padding: 14px 8px;
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+}
+.tab.active { color: var(--primary); border-bottom-color: var(--accent); }
 
 .month-nav {
   display: flex;
@@ -110,11 +182,18 @@ body {
 .summary-row.total {
   margin-top: 8px;
   padding-top: 16px;
-  border-top: 2px solid var(--primary-light);
+  border-top: 2px solid #e0f2fe;
   border-bottom: none;
+  align-items: center;
 }
 .summary-row.total .label { color: var(--text); font-weight: 700; font-size: 1.05rem; }
-.summary-row.total strong { color: var(--primary); font-size: 1.5rem; }
+.summary-row.total strong {
+  color: var(--primary-dark);
+  background: var(--accent);
+  font-size: 1.3rem;
+  padding: 6px 14px;
+  border-radius: 10px;
+}
 
 .list-section { margin: 0 16px 16px; }
 .list-section h2 {
@@ -138,8 +217,8 @@ body {
 }
 .dom-info { display: flex; align-items: center; gap: 10px; }
 .dom-num {
-  background: var(--primary-light);
-  color: var(--primary-dark);
+  background: #e0f2fe;
+  color: var(--primary);
   font-weight: 700;
   font-size: 0.8rem;
   width: 28px; height: 28px;
@@ -164,10 +243,90 @@ body {
   font-size: 0.9rem;
   background: white;
   border-radius: var(--radius);
+  margin: 0 16px;
 }
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(-8px); }
   to { opacity: 1; transform: translateY(0); }
+}
+
+/* Stats tab */
+.stats-cards {
+  display: flex;
+  gap: 12px;
+  margin: 16px;
+}
+.stat-card {
+  flex: 1;
+  border-radius: var(--radius);
+  padding: 18px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+}
+.stat-card.stat-navy { background: var(--primary); color: white; }
+.stat-card.stat-cyan { background: var(--accent); color: var(--primary-dark); }
+.stat-card .stat-label { font-size: 0.78rem; opacity: 0.85; font-weight: 600; }
+.stat-card strong { font-size: 1.4rem; font-weight: 800; }
+
+.chart-card {
+  background: white;
+  border-radius: var(--radius);
+  padding: 18px 14px 14px;
+  margin: 0 16px 12px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+}
+.chart-card h2 { font-size: 0.85rem; font-weight: 700; margin-bottom: 16px; }
+.chart {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  height: 130px;
+  padding-top: 22px;
+}
+.chart.chart-hours { gap: 2px; }
+.chart-col {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  height: 100%;
+  position: relative;
+}
+.chart-bar {
+  width: 100%;
+  background: var(--accent);
+  border-radius: 4px 4px 0 0;
+  min-height: 4px;
+  position: relative;
+}
+.chart-bar.highlight { background: var(--warn); }
+.chart-value {
+  position: absolute;
+  top: -18px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+.chart-label {
+  font-size: 0.62rem;
+  color: var(--text-muted);
+  margin-top: 4px;
+  white-space: nowrap;
+  text-align: center;
+}
+.chart-highlight {
+  margin-top: 12px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--primary);
+  text-align: center;
 }
 
 .fab {
@@ -175,14 +334,14 @@ body {
   bottom: max(24px, env(safe-area-inset-bottom));
   left: 50%;
   transform: translateX(-50%);
-  background: var(--primary);
-  color: white;
+  background: var(--accent);
+  color: var(--primary-dark);
   border: none;
   padding: 16px 26px;
   border-radius: 50px;
   font-size: 0.98rem;
   font-weight: 700;
-  box-shadow: 0 4px 16px rgba(13,148,136,0.4);
+  box-shadow: 0 4px 16px rgba(0,51,153,0.3);
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -236,6 +395,8 @@ body {
   max-width: 480px;
   transform: translateY(100%);
   transition: transform 0.25s ease;
+  max-height: 90vh;
+  overflow-y: auto;
 }
 .modal-overlay.open .modal { transform: translateY(0); }
 .modal h2 { margin-bottom: 18px; }
@@ -270,80 +431,161 @@ body {
 }
 .btn-secondary { background: #f1f5f9; color: var(--text); }
 .btn-primary { background: var(--primary); color: white; }
+.modal-divider { border: none; border-top: 1px solid #e2e8f0; margin: 20px 0 16px; }
+.btn-logout {
+  width: 100%;
+  padding: 14px;
+  border-radius: 10px;
+  border: 1px solid var(--danger);
+  background: white;
+  color: var(--danger);
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+}
 </style>
 </head>
 <body>
-<header class="topbar">
-  <div class="brand">🏍️ Farmanorte</div>
-  <button id="settingsBtn" class="icon-btn" aria-label="Configuración">⚙️</button>
-</header>
 
-<main>
-  <div class="month-nav">
-    <button id="prevMonth" class="nav-btn" aria-label="Mes anterior">‹</button>
-    <div class="month-label" id="monthLabel">Junio 2026</div>
-    <button id="nextMonth" class="nav-btn" aria-label="Mes siguiente">›</button>
+<div id="loginScreen" class="login-screen">
+  <div class="login-card">
+    <img src="logo.jpg" alt="Farmanorte" class="login-logo">
+    <h1>Mis Domicilios</h1>
+    <label>Tu nombre
+      <input type="text" id="loginName" placeholder="Ej: Andrés" autocomplete="name">
+    </label>
+    <label>Contraseña del equipo
+      <input type="password" id="loginPass" placeholder="••••••••" autocomplete="current-password">
+    </label>
+    <p id="loginError" class="login-error" hidden></p>
+    <button id="loginBtn" class="btn-primary" style="width:100%">Entrar</button>
   </div>
+</div>
 
-  <div id="pastBanner" class="past-banner" style="display:none">📋 Mes cerrado · solo consulta</div>
-
-  <section class="summary-card">
-    <div class="summary-row">
-      <span class="label">Domicilios realizados</span>
-      <strong id="countDomicilios">0</strong>
+<div id="app" hidden>
+  <header class="topbar">
+    <img src="logo.jpg" alt="Farmanorte" class="header-logo">
+    <div class="header-actions">
+      <span id="greeting" class="greeting"></span>
+      <button id="settingsBtn" class="icon-btn" aria-label="Configuración">⚙️</button>
     </div>
-    <div class="summary-row">
-      <span class="label">Valor por domicilio</span>
-      <strong id="valorUnit">$1.500</strong>
-    </div>
-    <div class="summary-row">
-      <span class="label">Subtotal domicilios</span>
-      <strong id="subtotal">$0</strong>
-    </div>
-    <div class="summary-row">
-      <span class="label">
-        Bono rodamiento
-        <span class="hint">Pago fijo, se paga el día 10</span>
-      </span>
-      <strong id="bono">$170.000</strong>
-    </div>
-    <div class="summary-row total">
-      <span class="label">Total a recibir</span>
-      <strong id="total">$170.000</strong>
-    </div>
-  </section>
+  </header>
 
-  <section class="list-section">
-    <h2>Domicilios del mes</h2>
-    <ul id="domicilioList" class="domicilio-list"></ul>
-    <p id="emptyMsg" class="empty-msg">Aún no has registrado domicilios este mes.</p>
-  </section>
-</main>
+  <nav class="tabs">
+    <button class="tab active" data-tab="registro">📋 Registro</button>
+    <button class="tab" data-tab="stats">📊 Estadísticas</button>
+  </nav>
 
-<button id="addBtn" class="fab">➕ Registrar domicilio</button>
+  <main>
+    <section id="tab-registro" class="tab-panel">
+      <div class="month-nav">
+        <button id="prevMonth" class="nav-btn" aria-label="Mes anterior">‹</button>
+        <div class="month-label" id="monthLabel">Junio 2026</div>
+        <button id="nextMonth" class="nav-btn" aria-label="Mes siguiente">›</button>
+      </div>
 
-<div id="toast" class="toast"></div>
+      <div id="pastBanner" class="past-banner" style="display:none">📋 Mes cerrado · solo consulta</div>
 
-<div id="settingsModal" class="modal-overlay">
-  <div class="modal">
-    <h2>Configuración</h2>
-    <label>Valor que recibo por domicilio
-      <input type="number" id="inputValor" inputmode="numeric" min="0" step="100">
-    </label>
-    <label>Bono fijo mensual (rodamiento)
-      <input type="number" id="inputBono" inputmode="numeric" min="0" step="1000">
-    </label>
-    <p class="hint">De los $3.000 que paga cada domicilio, la empresa se queda con $1.500 y a ti te corresponde el resto. El bono de rodamiento es un pago fijo mensual que llega el día 10.</p>
-    <div class="modal-actions">
-      <button id="cancelSettings" class="btn-secondary">Cancelar</button>
-      <button id="saveSettings" class="btn-primary">Guardar</button>
+      <section class="summary-card">
+        <div class="summary-row">
+          <span class="label">Domicilios realizados</span>
+          <strong id="countDomicilios">0</strong>
+        </div>
+        <div class="summary-row">
+          <span class="label">Valor por domicilio</span>
+          <strong id="valorUnit">$1.500</strong>
+        </div>
+        <div class="summary-row">
+          <span class="label">Subtotal domicilios</span>
+          <strong id="subtotal">$0</strong>
+        </div>
+        <div class="summary-row">
+          <span class="label">
+            Bono rodamiento
+            <span class="hint">Pago fijo, se paga el día 10</span>
+          </span>
+          <strong id="bono">$170.000</strong>
+        </div>
+        <div class="summary-row total">
+          <span class="label">Total a recibir</span>
+          <strong id="total">$170.000</strong>
+        </div>
+      </section>
+
+      <section class="list-section">
+        <h2>Domicilios del mes</h2>
+        <ul id="domicilioList" class="domicilio-list"></ul>
+        <p id="emptyMsg" class="empty-msg">Aún no has registrado domicilios este mes.</p>
+      </section>
+    </section>
+
+    <section id="tab-stats" class="tab-panel" hidden>
+      <div class="stats-cards">
+        <div class="stat-card stat-navy">
+          <span class="stat-label">Domicilios histórico</span>
+          <strong id="statTotalCount">0</strong>
+        </div>
+        <div class="stat-card stat-cyan">
+          <span class="stat-label">Ganado histórico</span>
+          <strong id="statTotalGanancia">$0</strong>
+        </div>
+      </div>
+
+      <p id="statsEmpty" class="empty-msg">Registra domicilios para ver tus estadísticas aquí.</p>
+
+      <div id="statsContent" hidden>
+        <div class="chart-card">
+          <h2>Domicilios por hora del día</h2>
+          <div id="chartHora" class="chart chart-hours"></div>
+          <p id="peakHourText" class="chart-highlight"></p>
+        </div>
+
+        <div class="chart-card">
+          <h2>Domicilios por día de la semana</h2>
+          <div id="chartDia" class="chart"></div>
+          <p id="peakDayText" class="chart-highlight"></p>
+        </div>
+
+        <div class="chart-card">
+          <h2>Últimos meses</h2>
+          <div id="chartMes" class="chart"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <button id="addBtn" class="fab">➕ Registrar domicilio</button>
+
+  <div id="toast" class="toast"></div>
+
+  <div id="settingsModal" class="modal-overlay">
+    <div class="modal">
+      <h2>Configuración</h2>
+      <label>Valor que recibo por domicilio
+        <input type="number" id="inputValor" inputmode="numeric" min="0" step="100">
+      </label>
+      <label>Bono fijo mensual (rodamiento)
+        <input type="number" id="inputBono" inputmode="numeric" min="0" step="1000">
+      </label>
+      <p class="hint">De los $3.000 que paga cada domicilio, la empresa se queda con $1.500 y a ti te corresponde el resto. El bono de rodamiento es un pago fijo mensual que llega el día 10.</p>
+      <div class="modal-actions">
+        <button id="cancelSettings" class="btn-secondary">Cancelar</button>
+        <button id="saveSettings" class="btn-primary">Guardar</button>
+      </div>
+      <hr class="modal-divider">
+      <button id="logoutBtn" class="btn-logout">Cerrar sesión</button>
     </div>
   </div>
 </div>
 
 <script>
 const STORAGE_KEY = 'farmanorte_domicilios_v1';
+const SESSION_KEY = 'farmanorte_session_v1';
+const TEAM_PASSWORD = 'farmanorte2026';
+
 const MONTHS = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+const SHORT_MONTHS = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+const DAY_LABELS = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
 
 let state = loadState();
 let viewedMonth = currentMonthKey();
@@ -376,6 +618,11 @@ function monthLabel(key) {
   return `${MONTHS[m - 1]} ${y}`;
 }
 
+function shortMonthLabel(key) {
+  const [y, m] = key.split('-').map(Number);
+  return `${SHORT_MONTHS[m - 1]} ${String(y).slice(2)}`;
+}
+
 function minMonthKey() {
   let min = currentMonthKey();
   Object.keys(state.registros).forEach(k => { if (k < min) min = k; });
@@ -386,9 +633,96 @@ function formatCOP(n) {
   return '$' + Math.round(n).toLocaleString('es-CO');
 }
 
+function formatHourLabel(h) {
+  const period = h < 12 ? 'a.m.' : 'p.m.';
+  let h12 = h % 12;
+  if (h12 === 0) h12 = 12;
+  return `${h12} ${period}`;
+}
+
+function formatHourRange(h) {
+  return `${formatHourLabel(h)} - ${formatHourLabel((h + 1) % 24)}`;
+}
+
 function getRegistros(monthKey) {
   return state.registros[monthKey] || [];
 }
+
+/* ---------- Sesión / login ---------- */
+
+function loadSession() {
+  try {
+    const raw = localStorage.getItem(SESSION_KEY);
+    if (raw) return JSON.parse(raw);
+  } catch (e) {}
+  return null;
+}
+
+let session = loadSession();
+
+function showApp() {
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('app').hidden = false;
+  document.getElementById('greeting').textContent = `Hola, ${session.name} 👋`;
+  render();
+}
+
+document.getElementById('loginBtn').addEventListener('click', () => {
+  const name = document.getElementById('loginName').value.trim();
+  const pass = document.getElementById('loginPass').value;
+  const errorEl = document.getElementById('loginError');
+
+  if (!name) {
+    errorEl.textContent = 'Escribe tu nombre.';
+    errorEl.hidden = false;
+    return;
+  }
+  if (pass !== TEAM_PASSWORD) {
+    errorEl.textContent = 'Contraseña incorrecta.';
+    errorEl.hidden = false;
+    return;
+  }
+  errorEl.hidden = true;
+  session = { name };
+  localStorage.setItem(SESSION_KEY, JSON.stringify(session));
+  showApp();
+});
+
+document.getElementById('logoutBtn').addEventListener('click', () => {
+  if (!confirm('¿Cerrar sesión?')) return;
+  localStorage.removeItem(SESSION_KEY);
+  session = null;
+  document.getElementById('settingsModal').classList.remove('open');
+  document.getElementById('app').hidden = true;
+  document.getElementById('loginName').value = '';
+  document.getElementById('loginPass').value = '';
+  document.getElementById('loginScreen').style.display = 'flex';
+});
+
+/* ---------- Tabs ---------- */
+
+document.querySelectorAll('.tab').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const target = btn.dataset.tab;
+    document.getElementById('tab-registro').hidden = target !== 'registro';
+    document.getElementById('tab-stats').hidden = target !== 'stats';
+    if (target === 'stats') renderStats();
+    updateFabVisibility();
+  });
+});
+
+function activeTab() {
+  return document.querySelector('.tab.active').dataset.tab;
+}
+
+function updateFabVisibility() {
+  const isCurrent = viewedMonth === currentMonthKey();
+  document.getElementById('addBtn').style.display = (activeTab() === 'registro' && isCurrent) ? 'flex' : 'none';
+}
+
+/* ---------- Registro ---------- */
 
 function render() {
   document.getElementById('monthLabel').textContent = monthLabel(viewedMonth);
@@ -397,7 +731,7 @@ function render() {
 
   const isCurrent = viewedMonth === currentMonthKey();
   document.getElementById('pastBanner').style.display = isCurrent ? 'none' : 'block';
-  document.getElementById('addBtn').style.display = isCurrent ? 'flex' : 'none';
+  updateFabVisibility();
 
   const registros = getRegistros(viewedMonth);
   const count = registros.length;
@@ -481,6 +815,100 @@ document.getElementById('nextMonth').addEventListener('click', () => {
   }
 });
 
+/* ---------- Estadísticas ---------- */
+
+function renderBarChart(container, items, opts = {}) {
+  container.innerHTML = '';
+  const max = Math.max(1, ...items.map(i => i.value));
+  items.forEach(item => {
+    const col = document.createElement('div');
+    col.className = 'chart-col';
+
+    const bar = document.createElement('div');
+    bar.className = 'chart-bar' + (item.highlight ? ' highlight' : '');
+    bar.style.height = `${Math.max(4, (item.value / max) * 100)}%`;
+
+    if (opts.showValue && item.value > 0) {
+      const val = document.createElement('span');
+      val.className = 'chart-value';
+      val.textContent = item.value;
+      bar.appendChild(val);
+    }
+
+    const label = document.createElement('span');
+    label.className = 'chart-label';
+    label.textContent = item.label;
+
+    col.appendChild(bar);
+    col.appendChild(label);
+    container.appendChild(col);
+  });
+}
+
+function renderStats() {
+  const valorUnit = state.config.valorDomicilio;
+  const bono = state.config.bonoMensual;
+
+  let totalCount = 0;
+  let totalGanancia = 0;
+  const porHora = new Array(24).fill(0);
+  const porDia = new Array(7).fill(0);
+  const monthEntries = [];
+
+  Object.keys(state.registros).sort().forEach(key => {
+    const arr = state.registros[key];
+    if (arr.length === 0) return;
+    totalCount += arr.length;
+    totalGanancia += arr.length * valorUnit + bono;
+    monthEntries.push({ key, count: arr.length });
+    arr.forEach(r => {
+      const d = new Date(r.timestamp);
+      porHora[d.getHours()]++;
+      porDia[d.getDay()]++;
+    });
+  });
+
+  document.getElementById('statTotalCount').textContent = totalCount;
+  document.getElementById('statTotalGanancia').textContent = formatCOP(totalGanancia);
+
+  const hasData = totalCount > 0;
+  document.getElementById('statsEmpty').style.display = hasData ? 'none' : 'block';
+  document.getElementById('statsContent').hidden = !hasData;
+  if (!hasData) return;
+
+  const maxHora = Math.max(...porHora);
+  const hourItems = porHora.map((v, h) => ({
+    label: h % 3 === 0 ? String(h) : '',
+    value: v,
+    highlight: v === maxHora && v > 0,
+  }));
+  renderBarChart(document.getElementById('chartHora'), hourItems);
+  const peakHour = porHora.indexOf(maxHora);
+  document.getElementById('peakHourText').textContent =
+    `🔥 Tu hora pico: ${formatHourRange(peakHour)} (${maxHora} domicilios)`;
+
+  const maxDia = Math.max(...porDia);
+  const dayItems = porDia.map((v, i) => ({
+    label: DAY_LABELS[i],
+    value: v,
+    highlight: v === maxDia && v > 0,
+  }));
+  renderBarChart(document.getElementById('chartDia'), dayItems, { showValue: true });
+  const peakDay = porDia.indexOf(maxDia);
+  document.getElementById('peakDayText').textContent =
+    `📅 Tu día más activo: ${DAY_LABELS[peakDay]} (${maxDia} domicilios)`;
+
+  const recentMonths = monthEntries.slice(-6);
+  const monthItems = recentMonths.map(m => ({
+    label: shortMonthLabel(m.key),
+    value: m.count,
+    highlight: false,
+  }));
+  renderBarChart(document.getElementById('chartMes'), monthItems, { showValue: true });
+}
+
+/* ---------- Configuración ---------- */
+
 const settingsModal = document.getElementById('settingsModal');
 document.getElementById('settingsBtn').addEventListener('click', () => {
   document.getElementById('inputValor').value = state.config.valorDomicilio;
@@ -497,6 +925,7 @@ document.getElementById('saveSettings').addEventListener('click', () => {
   saveState();
   settingsModal.classList.remove('open');
   render();
+  if (activeTab() === 'stats') renderStats();
 });
 
 if ('serviceWorker' in navigator) {
@@ -505,7 +934,11 @@ if ('serviceWorker' in navigator) {
   });
 }
 
-render();
+if (session && session.name) {
+  showApp();
+} else {
+  document.getElementById('loginScreen').style.display = 'flex';
+}
 </script>
 </body>
 </html>
