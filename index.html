@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#0d9488">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Domicilios">
+<title>Farmanorte - Mis Domicilios</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon.svg">
+<style>
+:root {
+  --primary: #0d9488;
+  --primary-dark: #0f766e;
+  --primary-light: #ccfbf1;
+  --bg: #f1f5f9;
+  --card-bg: #ffffff;
+  --text: #1e293b;
+  --text-muted: #64748b;
+  --danger: #ef4444;
+  --radius: 16px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+html, body { height: 100%; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  padding-bottom: 110px;
+}
+
+.topbar {
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  color: white;
+  padding: 18px 20px;
+  padding-top: max(18px, env(safe-area-inset-top));
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+}
+.brand { font-size: 1.25rem; font-weight: 700; display: flex; align-items: center; gap: 10px; }
+.icon-btn {
+  background: rgba(255,255,255,0.18);
+  border: none;
+  color: white;
+  font-size: 1.3rem;
+  width: 44px; height: 44px;
+  border-radius: 12px;
+  cursor: pointer;
+}
+.icon-btn:active { background: rgba(255,255,255,0.3); }
+
+.month-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 18px 16px 8px;
+}
+.month-label { font-size: 1.15rem; font-weight: 700; min-width: 170px; text-align: center; text-transform: capitalize; }
+.nav-btn {
+  background: white;
+  border: none;
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  font-size: 1.4rem;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+  color: var(--primary);
+  cursor: pointer;
+}
+.nav-btn:disabled { opacity: 0.25; }
+
+.past-banner {
+  text-align: center;
+  background: #fef3c7;
+  color: #92400e;
+  padding: 10px;
+  margin: 4px 16px 0;
+  border-radius: 10px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.summary-card {
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  padding: 20px;
+  margin: 16px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+}
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 10px 0;
+  border-bottom: 1px solid #f1f5f9;
+  font-size: 0.95rem;
+  gap: 12px;
+}
+.summary-row:last-child { border-bottom: none; }
+.summary-row .label { color: var(--text-muted); }
+.summary-row .hint { display: block; font-size: 0.72rem; color: #94a3b8; margin-top: 2px; }
+.summary-row.total {
+  margin-top: 8px;
+  padding-top: 16px;
+  border-top: 2px solid var(--primary-light);
+  border-bottom: none;
+}
+.summary-row.total .label { color: var(--text); font-weight: 700; font-size: 1.05rem; }
+.summary-row.total strong { color: var(--primary); font-size: 1.5rem; }
+
+.list-section { margin: 0 16px 16px; }
+.list-section h2 {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.domicilio-list { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+.domicilio-item {
+  background: white;
+  border-radius: 12px;
+  padding: 14px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+  animation: fadeIn 0.25s ease;
+}
+.dom-info { display: flex; align-items: center; gap: 10px; }
+.dom-num {
+  background: var(--primary-light);
+  color: var(--primary-dark);
+  font-weight: 700;
+  font-size: 0.8rem;
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.dom-time { font-weight: 500; }
+.del-btn {
+  background: none;
+  border: none;
+  font-size: 1.25rem;
+  cursor: pointer;
+  padding: 4px 8px;
+  opacity: 0.55;
+}
+.del-btn:active { opacity: 1; }
+.empty-msg {
+  text-align: center;
+  color: var(--text-muted);
+  padding: 28px 16px;
+  font-size: 0.9rem;
+  background: white;
+  border-radius: var(--radius);
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.fab {
+  position: fixed;
+  bottom: max(24px, env(safe-area-inset-bottom));
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--primary);
+  color: white;
+  border: none;
+  padding: 16px 26px;
+  border-radius: 50px;
+  font-size: 0.98rem;
+  font-weight: 700;
+  box-shadow: 0 4px 16px rgba(13,148,136,0.4);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+  z-index: 20;
+  transition: transform 0.1s;
+}
+.fab:active { transform: translateX(-50%) scale(0.96); }
+
+.toast {
+  position: fixed;
+  bottom: 110px;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: #1e293b;
+  color: white;
+  padding: 12px 24px;
+  border-radius: 50px;
+  font-size: 0.9rem;
+  opacity: 0;
+  transition: all 0.3s ease;
+  pointer-events: none;
+  z-index: 30;
+  white-space: nowrap;
+  max-width: 90vw;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  z-index: 50;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s;
+}
+.modal-overlay.open { opacity: 1; pointer-events: all; }
+.modal {
+  background: white;
+  border-radius: 20px 20px 0 0;
+  padding: 24px;
+  padding-bottom: max(24px, env(safe-area-inset-bottom));
+  width: 100%;
+  max-width: 480px;
+  transform: translateY(100%);
+  transition: transform 0.25s ease;
+}
+.modal-overlay.open .modal { transform: translateY(0); }
+.modal h2 { margin-bottom: 18px; }
+.modal label {
+  display: block;
+  margin-bottom: 16px;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+.modal input {
+  display: block;
+  width: 100%;
+  margin-top: 6px;
+  padding: 12px;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  font-size: 1rem;
+  color: var(--text);
+  font-weight: 400;
+}
+.modal .hint { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 16px; line-height: 1.4; }
+.modal-actions { display: flex; gap: 12px; margin-top: 4px; }
+.btn-secondary, .btn-primary {
+  flex: 1;
+  padding: 14px;
+  border-radius: 10px;
+  border: none;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+.btn-secondary { background: #f1f5f9; color: var(--text); }
+.btn-primary { background: var(--primary); color: white; }
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="brand">🏍️ Farmanorte</div>
+  <button id="settingsBtn" class="icon-btn" aria-label="Configuración">⚙️</button>
+</header>
+
+<main>
+  <div class="month-nav">
+    <button id="prevMonth" class="nav-btn" aria-label="Mes anterior">‹</button>
+    <div class="month-label" id="monthLabel">Junio 2026</div>
+    <button id="nextMonth" class="nav-btn" aria-label="Mes siguiente">›</button>
+  </div>
+
+  <div id="pastBanner" class="past-banner" style="display:none">📋 Mes cerrado · solo consulta</div>
+
+  <section class="summary-card">
+    <div class="summary-row">
+      <span class="label">Domicilios realizados</span>
+      <strong id="countDomicilios">0</strong>
+    </div>
+    <div class="summary-row">
+      <span class="label">Valor por domicilio</span>
+      <strong id="valorUnit">$1.500</strong>
+    </div>
+    <div class="summary-row">
+      <span class="label">Subtotal domicilios</span>
+      <strong id="subtotal">$0</strong>
+    </div>
+    <div class="summary-row">
+      <span class="label">
+        Bono rodamiento
+        <span class="hint">Pago fijo, se paga el día 10</span>
+      </span>
+      <strong id="bono">$170.000</strong>
+    </div>
+    <div class="summary-row total">
+      <span class="label">Total a recibir</span>
+      <strong id="total">$170.000</strong>
+    </div>
+  </section>
+
+  <section class="list-section">
+    <h2>Domicilios del mes</h2>
+    <ul id="domicilioList" class="domicilio-list"></ul>
+    <p id="emptyMsg" class="empty-msg">Aún no has registrado domicilios este mes.</p>
+  </section>
+</main>
+
+<button id="addBtn" class="fab">➕ Registrar domicilio</button>
+
+<div id="toast" class="toast"></div>
+
+<div id="settingsModal" class="modal-overlay">
+  <div class="modal">
+    <h2>Configuración</h2>
+    <label>Valor que recibo por domicilio
+      <input type="number" id="inputValor" inputmode="numeric" min="0" step="100">
+    </label>
+    <label>Bono fijo mensual (rodamiento)
+      <input type="number" id="inputBono" inputmode="numeric" min="0" step="1000">
+    </label>
+    <p class="hint">De los $3.000 que paga cada domicilio, la empresa se queda con $1.500 y a ti te corresponde el resto. El bono de rodamiento es un pago fijo mensual que llega el día 10.</p>
+    <div class="modal-actions">
+      <button id="cancelSettings" class="btn-secondary">Cancelar</button>
+      <button id="saveSettings" class="btn-primary">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const STORAGE_KEY = 'farmanorte_domicilios_v1';
+const MONTHS = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+
+let state = loadState();
+let viewedMonth = currentMonthKey();
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) return JSON.parse(raw);
+  } catch (e) {}
+  return { config: { valorDomicilio: 1500, bonoMensual: 170000 }, registros: {} };
+}
+
+function saveState() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+}
+
+function currentMonthKey() {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+}
+
+function monthKeyOffset(key, offset) {
+  const [y, m] = key.split('-').map(Number);
+  const d = new Date(y, m - 1 + offset, 1);
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+}
+
+function monthLabel(key) {
+  const [y, m] = key.split('-').map(Number);
+  return `${MONTHS[m - 1]} ${y}`;
+}
+
+function minMonthKey() {
+  let min = currentMonthKey();
+  Object.keys(state.registros).forEach(k => { if (k < min) min = k; });
+  return min;
+}
+
+function formatCOP(n) {
+  return '$' + Math.round(n).toLocaleString('es-CO');
+}
+
+function getRegistros(monthKey) {
+  return state.registros[monthKey] || [];
+}
+
+function render() {
+  document.getElementById('monthLabel').textContent = monthLabel(viewedMonth);
+  document.getElementById('prevMonth').disabled = viewedMonth <= minMonthKey();
+  document.getElementById('nextMonth').disabled = viewedMonth >= currentMonthKey();
+
+  const isCurrent = viewedMonth === currentMonthKey();
+  document.getElementById('pastBanner').style.display = isCurrent ? 'none' : 'block';
+  document.getElementById('addBtn').style.display = isCurrent ? 'flex' : 'none';
+
+  const registros = getRegistros(viewedMonth);
+  const count = registros.length;
+  const valorUnit = state.config.valorDomicilio;
+  const bono = state.config.bonoMensual;
+  const subtotal = count * valorUnit;
+  const total = subtotal + bono;
+
+  document.getElementById('countDomicilios').textContent = count;
+  document.getElementById('valorUnit').textContent = formatCOP(valorUnit);
+  document.getElementById('subtotal').textContent = formatCOP(subtotal);
+  document.getElementById('bono').textContent = formatCOP(bono);
+  document.getElementById('total').textContent = formatCOP(total);
+
+  const list = document.getElementById('domicilioList');
+  list.innerHTML = '';
+  document.getElementById('emptyMsg').style.display = count === 0 ? 'block' : 'none';
+
+  registros.forEach((r, i) => {
+    const li = document.createElement('li');
+    li.className = 'domicilio-item';
+    const date = new Date(r.timestamp);
+    const timeStr = date.toLocaleString('es-CO', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
+    li.innerHTML = `
+      <div class="dom-info">
+        <span class="dom-num">${i + 1}</span>
+        <span class="dom-time">${timeStr}</span>
+      </div>
+      <button class="del-btn" data-id="${r.id}" aria-label="Eliminar">🗑️</button>
+    `;
+    list.appendChild(li);
+  });
+}
+
+function addDomicilio() {
+  const monthKey = currentMonthKey();
+  if (!state.registros[monthKey]) state.registros[monthKey] = [];
+  state.registros[monthKey].push({ id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6), timestamp: Date.now() });
+  saveState();
+  viewedMonth = monthKey;
+  render();
+  showToast(`Domicilio registrado ✅ · Van ${state.registros[monthKey].length} este mes`);
+}
+
+function deleteDomicilio(id) {
+  const registros = getRegistros(viewedMonth);
+  const idx = registros.findIndex(r => r.id === id);
+  if (idx === -1) return;
+  if (!confirm('¿Eliminar este domicilio?')) return;
+  registros.splice(idx, 1);
+  saveState();
+  render();
+}
+
+let toastTimeout;
+function showToast(msg) {
+  const toast = document.getElementById('toast');
+  toast.textContent = msg;
+  toast.classList.add('show');
+  clearTimeout(toastTimeout);
+  toastTimeout = setTimeout(() => toast.classList.remove('show'), 2200);
+}
+
+document.getElementById('addBtn').addEventListener('click', addDomicilio);
+
+document.getElementById('domicilioList').addEventListener('click', e => {
+  const btn = e.target.closest('.del-btn');
+  if (btn) deleteDomicilio(btn.dataset.id);
+});
+
+document.getElementById('prevMonth').addEventListener('click', () => {
+  if (viewedMonth > minMonthKey()) {
+    viewedMonth = monthKeyOffset(viewedMonth, -1);
+    render();
+  }
+});
+document.getElementById('nextMonth').addEventListener('click', () => {
+  if (viewedMonth < currentMonthKey()) {
+    viewedMonth = monthKeyOffset(viewedMonth, 1);
+    render();
+  }
+});
+
+const settingsModal = document.getElementById('settingsModal');
+document.getElementById('settingsBtn').addEventListener('click', () => {
+  document.getElementById('inputValor').value = state.config.valorDomicilio;
+  document.getElementById('inputBono').value = state.config.bonoMensual;
+  settingsModal.classList.add('open');
+});
+document.getElementById('cancelSettings').addEventListener('click', () => settingsModal.classList.remove('open'));
+settingsModal.addEventListener('click', e => { if (e.target === settingsModal) settingsModal.classList.remove('open'); });
+document.getElementById('saveSettings').addEventListener('click', () => {
+  const valor = parseInt(document.getElementById('inputValor').value, 10);
+  const bono = parseInt(document.getElementById('inputBono').value, 10);
+  if (!isNaN(valor) && valor >= 0) state.config.valorDomicilio = valor;
+  if (!isNaN(bono) && bono >= 0) state.config.bonoMensual = bono;
+  saveState();
+  settingsModal.classList.remove('open');
+  render();
+});
+
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').catch(() => {});
+  });
+}
+
+render();
+</script>
+</body>
+</html>
