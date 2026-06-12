@@ -75,6 +75,7 @@ html[data-theme="dark"] .past-banner { border-color: #4a3a16; }
 html[data-theme="dark"] .stat-cyan strong { color: var(--money); }
 
 * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+[hidden] { display: none !important; }
 
 html { font-size: 16px; }
 
@@ -699,6 +700,8 @@ main {
 .modal {
   width: 100%;
   max-width: 480px;
+  max-height: 88dvh;
+  overflow-y: auto;
   background: var(--surface);
   border-radius: 22px 22px 0 0;
   padding: 24px 22px calc(24px + env(safe-area-inset-bottom, 0px));
