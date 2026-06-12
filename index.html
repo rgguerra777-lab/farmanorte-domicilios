@@ -37,7 +37,42 @@
   --shadow-float: 0 8px 28px -6px rgba(6,33,79,.38);
   --font-ui: 'Manrope', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
   --font-money: 'IBM Plex Mono', 'SF Mono', ui-monospace, Menlo, monospace;
+  --brand-fg: #003399;
+  --nav-bg: rgba(255,255,255,.9);
+  --bar-muted: #b9c8e6;
+  --chip: #f1f4f9;
+  --input-bg: #f7f9fc;
+  --thumb-bg: #dde4ef;
+  --toast-bg: #101c33;
+  --toast-fg: #ffffff;
 }
+
+html[data-theme="dark"] {
+  --brand-soft: #16294e;
+  --ink: #e8edf7;
+  --muted: #9fadc7;
+  --faint: #76849f;
+  --bg: #0b1120;
+  --surface: #141d33;
+  --line: #243150;
+  --money-soft: #103a2c;
+  --money: #34c391;
+  --danger: #ff7b7b;
+  --danger-soft: #3a1c24;
+  --warn-soft: #382c12;
+  --warn-ink: #e6bb66;
+  --brand-fg: #8fb3ff;
+  --nav-bg: rgba(13,18,33,.92);
+  --bar-muted: #344a75;
+  --chip: #1d2944;
+  --input-bg: #0f1830;
+  --thumb-bg: #1d2944;
+  --toast-bg: #e8edf7;
+  --toast-fg: #101c33;
+  --shadow-card: 0 1px 2px rgba(0,0,0,.3), 0 6px 20px -8px rgba(0,0,0,.4);
+}
+html[data-theme="dark"] .past-banner { border-color: #4a3a16; }
+html[data-theme="dark"] .stat-cyan strong { color: var(--money); }
 
 * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
@@ -135,7 +170,7 @@ button:focus-visible, input:focus-visible, .recibo-cell:focus-visible {
   padding: 13px 14px;
   border: 1.5px solid var(--line);
   border-radius: 12px;
-  background: #f7f9fc;
+  background: var(--input-bg);
   color: var(--ink);
   font-weight: 600;
   transition: border-color .15s, background .15s;
@@ -169,7 +204,7 @@ button:focus-visible, input:focus-visible, .recibo-cell:focus-visible {
 .btn-primary:active { transform: scale(.97); background: var(--brand-deep); }
 .btn-secondary {
   background: var(--brand-soft);
-  color: var(--brand);
+  color: var(--brand-fg);
   font-size: .95rem;
   font-weight: 800;
   padding: 14px 20px;
@@ -195,7 +230,7 @@ button:focus-visible, input:focus-visible, .recibo-cell:focus-visible {
   justify-content: space-between;
   gap: 12px;
   padding: calc(env(safe-area-inset-top, 0px) + 12px) 18px 12px;
-  background: rgba(255,255,255,.86);
+  background: var(--nav-bg);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
   border-bottom: 1px solid var(--line);
@@ -222,7 +257,7 @@ button:focus-visible, input:focus-visible, .recibo-cell:focus-visible {
   height: 38px;
   border-radius: 12px;
   background: var(--brand-soft);
-  color: var(--brand);
+  color: var(--brand-fg);
   transition: transform .12s;
 }
 .icon-btn:active { transform: scale(.92); }
@@ -255,7 +290,7 @@ main {
   border-radius: 12px;
   background: var(--surface);
   border: 1px solid var(--line);
-  color: var(--brand);
+  color: var(--brand-fg);
   font-size: 1.3rem;
   line-height: 1;
   display: grid;
@@ -348,6 +383,65 @@ main {
   margin-top: 1px;
 }
 
+/* ===== Meta mensual ===== */
+.goal-wrap { margin-top: 12px; display: flex; flex-direction: column; gap: 6px; }
+.goal-track { height: 8px; border-radius: 99px; background: rgba(255,255,255,.18); overflow: hidden; }
+.goal-fill {
+  height: 100%;
+  border-radius: 99px;
+  background: linear-gradient(90deg, var(--cyan), #7ee2ff);
+  width: 0%;
+  transition: width .45s cubic-bezier(.2,.8,.3,1);
+}
+.goal-text { font-size: .72rem; font-weight: 700; color: rgba(255,255,255,.72); }
+
+/* ===== Herramientas (modal config) ===== */
+.modal-section {
+  font-size: .68rem;
+  font-weight: 700;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--faint);
+  margin-bottom: 10px;
+}
+.btn-tool {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  background: var(--brand-soft);
+  color: var(--brand-fg);
+  font-weight: 800;
+  font-size: .9rem;
+  padding: 13px;
+  border-radius: 13px;
+  margin-bottom: 8px;
+}
+.btn-tool svg { width: 17px; height: 17px; flex: none; }
+
+/* ===== Informe imprimible ===== */
+#reportView { display: none; }
+@media print {
+  body > *:not(#reportView) { display: none !important; }
+  body { background: #fff; }
+  #reportView { display: block; color: #000; font-family: var(--font-ui); padding: 8px; }
+  .rep-head { display: flex; align-items: center; gap: 12px; border-bottom: 2px solid #003399; padding-bottom: 10px; margin-bottom: 14px; }
+  .rep-head img { height: 44px; border-radius: 8px; }
+  .rep-head h1 { font-size: 1.1rem; margin: 0; }
+  .rep-head p { font-size: .8rem; color: #444; margin: 2px 0 0; }
+  .rep-table { width: 100%; border-collapse: collapse; font-size: .8rem; margin-bottom: 14px; }
+  .rep-table th, .rep-table td { border: 1px solid #ccc; padding: 5px 8px; text-align: left; }
+  .rep-table th { background: #eef2fb; }
+  .rep-totals { font-size: .9rem; margin-bottom: 18px; }
+  .rep-totals strong { font-family: var(--font-money); }
+  .rep-photos { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .rep-photo { break-inside: avoid; }
+  .rep-photo img { width: 100%; border: 1px solid #ccc; border-radius: 6px; }
+  .rep-photo span { font-size: .7rem; color: #444; }
+  .rep-foot { margin-top: 16px; font-size: .7rem; color: #777; }
+}
+
 /* ===== Lista de domicilios ===== */
 .list-section h2, .chart-card h2, .recibos-head { color: var(--faint); margin-bottom: 10px; }
 .domicilio-list { list-style: none; display: flex; flex-direction: column; gap: 8px; }
@@ -371,7 +465,7 @@ main {
   flex: none;
   border-radius: 10px;
   background: var(--brand-soft);
-  color: var(--brand);
+  color: var(--brand-fg);
   font-weight: 800;
   font-size: .82rem;
 }
@@ -386,7 +480,7 @@ main {
   transition: transform .12s;
 }
 .photo-badge:active, .del-btn:active { transform: scale(.9); }
-.photo-badge { background: #f1f4f9; color: var(--faint); }
+.photo-badge { background: var(--chip); color: var(--faint); }
 .photo-badge.has-photo { background: var(--money-soft); color: var(--money); }
 .del-btn { background: var(--danger-soft); color: var(--danger); }
 .photo-badge svg, .del-btn svg { width: 17px; height: 17px; }
@@ -460,7 +554,7 @@ main {
   position: relative;
   width: 100%;
   max-width: 26px;
-  background: #b9c8e6;
+  background: var(--bar-muted);
   border-radius: 5px 5px 0 0;
   transition: height .35s cubic-bezier(.2,.8,.3,1);
 }
@@ -484,7 +578,7 @@ main {
   margin-top: 10px;
   font-size: .8rem;
   font-weight: 700;
-  color: var(--brand);
+  color: var(--brand-fg);
   background: var(--brand-soft);
   padding: 8px 12px;
   border-radius: 10px;
@@ -507,7 +601,7 @@ main {
   aspect-ratio: 3 / 4;
   border-radius: 12px;
   overflow: hidden;
-  background: #dde4ef;
+  background: var(--thumb-bg);
   border: 1px solid var(--line);
   box-shadow: var(--shadow-card);
 }
@@ -521,7 +615,7 @@ main {
   z-index: 40;
   display: flex;
   justify-content: space-around;
-  background: rgba(255,255,255,.94);
+  background: var(--nav-bg);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
   border-top: 1px solid var(--line);
@@ -542,7 +636,7 @@ main {
   transition: color .15s;
 }
 .tab svg { width: 21px; height: 21px; }
-.tab.active { color: var(--brand); }
+.tab.active { color: var(--brand-fg); }
 
 /* ===== Botón flotante ===== */
 .fab {
@@ -573,8 +667,8 @@ main {
   left: 50%;
   transform: translateX(-50%) translateY(12px);
   z-index: 60;
-  background: var(--ink);
-  color: #fff;
+  background: var(--toast-bg);
+  color: var(--toast-fg);
   font-size: .84rem;
   font-weight: 700;
   padding: 11px 18px;
@@ -651,7 +745,7 @@ main {
 .btn-skip {
   width: 100%;
   background: var(--brand-soft);
-  color: var(--brand);
+  color: var(--brand-fg);
   font-size: .9rem;
   font-weight: 800;
   padding: 13px;
@@ -779,6 +873,10 @@ main {
           <span class="summary-eyebrow">Total a recibir</span>
           <strong id="total" class="summary-total">$170.000</strong>
           <span class="summary-sub"><strong id="countDomicilios">0</strong> domicilios registrados</span>
+          <div id="goalWrap" class="goal-wrap" hidden>
+            <div class="goal-track"><div id="goalFill" class="goal-fill"></div></div>
+            <span id="goalText" class="goal-text"></span>
+          </div>
         </div>
         <div class="summary-detail">
           <div class="summary-row">
@@ -864,11 +962,21 @@ main {
       <label>Bono fijo mensual (rodamiento)
         <input type="number" id="inputBono" inputmode="numeric" min="0" step="1000">
       </label>
+      <label>Meta del mes (en pesos · 0 para desactivar)
+        <input type="number" id="inputMeta" inputmode="numeric" min="0" step="10000">
+      </label>
       <p class="hint">De los $3.000 que paga cada domicilio, la empresa se queda con $1.500 y a ti te corresponde el resto. El bono de rodamiento es un pago fijo mensual que llega el día 10.</p>
       <div class="modal-actions">
         <button id="cancelSettings" class="btn-secondary">Cancelar</button>
         <button id="saveSettings" class="btn-primary">Guardar</button>
       </div>
+      <hr class="modal-divider">
+      <p class="modal-section">Herramientas</p>
+      <button id="themeBtn" class="btn-tool"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg> <span id="themeBtnLabel">Activar modo oscuro</span></button>
+      <button id="reportBtn" class="btn-tool"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M9 15h6M9 11h2"/></svg> Informe del mes (PDF)</button>
+      <button id="exportBtn" class="btn-tool"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg> Exportar respaldo</button>
+      <button id="importBtn" class="btn-tool"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg> Importar respaldo</button>
+      <input type="file" id="importFile" accept="application/json,.json" hidden>
       <hr class="modal-divider">
       <button id="logoutBtn" class="btn-logout">Cerrar sesión</button>
     </div>
@@ -880,6 +988,10 @@ main {
     <div class="modal">
       <h2>Registrar domicilio</h2>
       <p class="hint">Toma una foto del recibo para guardar la evidencia. Podrás verla cuando quieras en la pestaña "Recibos".</p>
+      <label>Fecha y hora del domicilio
+        <input type="datetime-local" id="inputFecha">
+      </label>
+      <p class="hint">Déjala como está para registrar con la hora actual, o cámbiala si es un domicilio que olvidaste anotar.</p>
       <button id="takePhotoBtn" class="btn-camera"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg> Tomar foto del recibo</button>
       <button id="skipPhotoBtn" class="btn-skip">Registrar sin foto</button>
     </div>
@@ -901,6 +1013,8 @@ main {
   </div>
 </div>
 
+<div id="reportView"></div>
+
 <script>
 const STORAGE_KEY = 'farmanorte_domicilios_v1';
 const SESSION_KEY = 'farmanorte_session_v1';
@@ -911,6 +1025,15 @@ const SHORT_MONTHS = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct
 const DAY_LABELS = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
 
 let state = loadState();
+state.config = Object.assign({ valorDomicilio: 1500, bonoMensual: 170000, metaMensual: 0, theme: 'light' }, state.config);
+
+function applyTheme() {
+  document.documentElement.dataset.theme = state.config.theme === 'dark' ? 'dark' : 'light';
+  const label = document.getElementById('themeBtnLabel');
+  if (label) label.textContent = state.config.theme === 'dark' ? 'Activar modo claro' : 'Activar modo oscuro';
+}
+applyTheme();
+
 let viewedMonth = currentMonthKey();
 
 function loadState() {
@@ -1161,6 +1284,24 @@ function render() {
   document.getElementById('bono').textContent = formatCOP(bono);
   document.getElementById('total').textContent = formatCOP(total);
 
+  const meta = state.config.metaMensual || 0;
+  const goalWrap = document.getElementById('goalWrap');
+  if (meta > 0) {
+    goalWrap.hidden = false;
+    const pct = Math.min(100, (total / meta) * 100);
+    document.getElementById('goalFill').style.width = pct.toFixed(1) + '%';
+    const falta = Math.max(0, meta - total);
+    const goalText = document.getElementById('goalText');
+    if (falta <= 0) {
+      goalText.textContent = '¡Meta de ' + formatCOP(meta) + ' cumplida! 🎉';
+    } else {
+      const nDom = valorUnit > 0 ? Math.ceil(falta / valorUnit) : 0;
+      goalText.textContent = 'Meta ' + formatCOP(meta) + ' · te faltan ' + formatCOP(falta) + (nDom > 0 ? ' (~' + nDom + ' domicilios)' : '');
+    }
+  } else {
+    goalWrap.hidden = true;
+  }
+
   const list = document.getElementById('domicilioList');
   list.innerHTML = '';
   document.getElementById('emptyMsg').style.display = count === 0 ? 'block' : 'none';
@@ -1184,14 +1325,35 @@ function render() {
   });
 }
 
-async function addDomicilio(photoDataUrl) {
-  const monthKey = currentMonthKey();
+function localNowForInput() {
+  const d = new Date();
+  d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
+  return d.toISOString().slice(0, 16);
+}
+
+function chosenTimestamp() {
+  const v = document.getElementById('inputFecha').value;
+  let t = v ? new Date(v).getTime() : Date.now();
+  if (isNaN(t)) t = Date.now();
+  return Math.min(t, Date.now());
+}
+
+function monthKeyForTimestamp(ts) {
+  const d = new Date(ts);
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+}
+
+async function addDomicilio(photoDataUrl, ts) {
+  const timestamp = ts || Date.now();
+  const monthKey = monthKeyForTimestamp(timestamp);
   if (!state.registros[monthKey]) state.registros[monthKey] = [];
   const id = Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
-  state.registros[monthKey].push({ id, timestamp: Date.now(), foto: !!photoDataUrl });
+  state.registros[monthKey].push({ id, timestamp, foto: !!photoDataUrl });
+  state.registros[monthKey].sort((a, b) => a.timestamp - b.timestamp);
   saveState();
   if (photoDataUrl) await savePhoto(id, photoDataUrl);
   viewedMonth = monthKey;
+  // (el resumen y la lista se actualizan abajo)
   render();
   if (activeTab() === 'recibos') renderRecibos();
   const sufijo = photoDataUrl ? ' con foto 📸' : '';
@@ -1221,6 +1383,7 @@ function showToast(msg) {
 }
 
 document.getElementById('addBtn').addEventListener('click', () => {
+  document.getElementById('inputFecha').value = localNowForInput();
   document.getElementById('addModal').classList.add('open');
 });
 
@@ -1453,14 +1616,16 @@ document.getElementById('deletePhotoBtn').addEventListener('click', async () => 
 
 /* ---------- Modal "registrar domicilio" ---------- */
 
+let pendingTimestamp = null;
 document.getElementById('takePhotoBtn').addEventListener('click', () => {
   pendingNewDomicilio = true;
+  pendingTimestamp = chosenTimestamp();
   document.getElementById('photoInput').click();
 });
 
 document.getElementById('skipPhotoBtn').addEventListener('click', () => {
   document.getElementById('addModal').classList.remove('open');
-  addDomicilio(null);
+  addDomicilio(null, chosenTimestamp());
 });
 
 document.getElementById('addModal').addEventListener('click', e => {
@@ -1480,7 +1645,8 @@ document.getElementById('photoInput').addEventListener('change', async e => {
   if (pendingNewDomicilio) {
     pendingNewDomicilio = false;
     document.getElementById('addModal').classList.remove('open');
-    await addDomicilio(dataUrl);
+    await addDomicilio(dataUrl, pendingTimestamp);
+    pendingTimestamp = null;
     return;
   }
 
@@ -1501,6 +1667,7 @@ const settingsModal = document.getElementById('settingsModal');
 document.getElementById('settingsBtn').addEventListener('click', () => {
   document.getElementById('inputValor').value = state.config.valorDomicilio;
   document.getElementById('inputBono').value = state.config.bonoMensual;
+  document.getElementById('inputMeta').value = state.config.metaMensual || 0;
   settingsModal.classList.add('open');
 });
 document.getElementById('cancelSettings').addEventListener('click', () => settingsModal.classList.remove('open'));
@@ -1510,10 +1677,156 @@ document.getElementById('saveSettings').addEventListener('click', () => {
   const bono = parseInt(document.getElementById('inputBono').value, 10);
   if (!isNaN(valor) && valor >= 0) state.config.valorDomicilio = valor;
   if (!isNaN(bono) && bono >= 0) state.config.bonoMensual = bono;
+  const meta = parseInt(document.getElementById('inputMeta').value, 10);
+  if (!isNaN(meta) && meta >= 0) state.config.metaMensual = meta;
   saveState();
   settingsModal.classList.remove('open');
   render();
   if (activeTab() === 'stats') renderStats();
+});
+
+document.getElementById('themeBtn').addEventListener('click', () => {
+  state.config.theme = state.config.theme === 'dark' ? 'light' : 'dark';
+  saveState();
+  applyTheme();
+});
+
+/* ---------- Respaldo: exportar / importar ---------- */
+
+async function collectPhotos() {
+  const photos = {};
+  for (const key of Object.keys(state.registros)) {
+    for (const r of state.registros[key]) {
+      if (r.foto) {
+        try {
+          const dataUrl = await getPhoto(r.id);
+          if (dataUrl) photos[r.id] = dataUrl;
+        } catch (e) {}
+      }
+    }
+  }
+  return photos;
+}
+
+document.getElementById('exportBtn').addEventListener('click', async () => {
+  showToast('Preparando respaldo...');
+  const photos = await collectPhotos();
+  const data = {
+    app: 'farmanorte-domicilios',
+    version: 1,
+    exportedAt: new Date().toISOString(),
+    state,
+    photos,
+  };
+  const blob = new Blob([JSON.stringify(data)], { type: 'application/json' });
+  const a = document.createElement('a');
+  const f = new Date();
+  const fecha = `${f.getFullYear()}-${String(f.getMonth() + 1).padStart(2, '0')}-${String(f.getDate()).padStart(2, '0')}`;
+  a.href = URL.createObjectURL(blob);
+  a.download = `respaldo-domicilios-${fecha}.json`;
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 5000);
+  showToast('Respaldo descargado ✅ Guárdalo en un lugar seguro');
+});
+
+document.getElementById('importBtn').addEventListener('click', () => {
+  document.getElementById('importFile').click();
+});
+
+document.getElementById('importFile').addEventListener('change', async e => {
+  const file = e.target.files[0];
+  e.target.value = '';
+  if (!file) return;
+  let data;
+  try {
+    data = JSON.parse(await file.text());
+  } catch (err) {
+    showToast('Ese archivo no es un respaldo válido');
+    return;
+  }
+  if (!data || data.app !== 'farmanorte-domicilios' || !data.state || !data.state.registros) {
+    showToast('Ese archivo no es un respaldo válido');
+    return;
+  }
+  if (!confirm('Esto reemplazará TODOS los datos actuales por los del respaldo. ¿Continuar?')) return;
+  state = data.state;
+  state.config = Object.assign({ valorDomicilio: 1500, bonoMensual: 170000, metaMensual: 0, theme: 'light' }, state.config);
+  saveState();
+  if (data.photos) {
+    for (const id of Object.keys(data.photos)) {
+      try { await savePhoto(id, data.photos[id]); } catch (err) {}
+    }
+  }
+  applyTheme();
+  viewedMonth = currentMonthKey();
+  settingsModal.classList.remove('open');
+  render();
+  if (activeTab() === 'recibos') renderRecibos();
+  if (activeTab() === 'stats') renderStats();
+  showToast('Respaldo restaurado ✅');
+});
+
+/* ---------- Informe del mes (imprimir / guardar PDF) ---------- */
+
+document.getElementById('reportBtn').addEventListener('click', async () => {
+  const registros = getRegistros(viewedMonth);
+  if (registros.length === 0) {
+    showToast('No hay domicilios en este mes para el informe');
+    return;
+  }
+  showToast('Generando informe...');
+  const valorUnit = state.config.valorDomicilio;
+  const bono = state.config.bonoMensual;
+  const subtotal = registros.length * valorUnit;
+  const total = subtotal + bono;
+  const logoSrc = document.querySelector('.header-logo').src;
+
+  let rows = '';
+  registros.forEach((r, i) => {
+    const d = new Date(r.timestamp);
+    const fecha = d.toLocaleDateString('es-CO', { day: '2-digit', month: '2-digit', year: 'numeric' });
+    const hora = d.toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit' });
+    rows += `<tr><td>${i + 1}</td><td>${fecha}</td><td>${hora}</td><td>${r.foto ? 'Sí' : 'No'}</td></tr>`;
+  });
+
+  let photosHtml = '';
+  for (const r of registros) {
+    if (!r.foto) continue;
+    try {
+      const dataUrl = await getPhoto(r.id);
+      if (dataUrl) {
+        const d = new Date(r.timestamp);
+        const lbl = d.toLocaleString('es-CO', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
+        photosHtml += `<div class="rep-photo"><img src="${dataUrl}" alt="Recibo"><span>${lbl}</span></div>`;
+      }
+    } catch (e) {}
+  }
+
+  const quien = session && session.name ? session.name : '';
+  document.getElementById('reportView').innerHTML = `
+    <div class="rep-head">
+      <img src="${logoSrc}" alt="Farmanorte">
+      <div>
+        <h1>Liquidación de domicilios · ${monthLabel(viewedMonth)}</h1>
+        <p>Farmanorte${quien ? ' · Domiciliario: ' + quien : ''}</p>
+      </div>
+    </div>
+    <table class="rep-table">
+      <thead><tr><th>#</th><th>Fecha</th><th>Hora</th><th>Recibo</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>
+    <div class="rep-totals">
+      <p>Domicilios realizados: <strong>${registros.length}</strong></p>
+      <p>Valor por domicilio: <strong>${formatCOP(valorUnit)}</strong></p>
+      <p>Subtotal domicilios: <strong>${formatCOP(subtotal)}</strong></p>
+      <p>Bono rodamiento: <strong>${formatCOP(bono)}</strong></p>
+      <p>Total a recibir: <strong>${formatCOP(total)}</strong></p>
+    </div>
+    ${photosHtml ? '<h2 style="font-size:.9rem">Recibos del mes</h2><div class="rep-photos">' + photosHtml + '</div>' : ''}
+    <p class="rep-foot">Generado el ${new Date().toLocaleString('es-CO')} con la app Mis Domicilios.</p>
+  `;
+  settingsModal.classList.remove('open');
+  setTimeout(() => window.print(), 300);
 });
 
 if ('serviceWorker' in navigator) {
