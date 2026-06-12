@@ -1,4 +1,4 @@
-const CACHE_NAME = 'farmanorte-domicilios-v6';
+const CACHE_NAME = 'farmanorte-domicilios-v7';
 const ASSETS = ['./', './index.html', './manifest.json', './icon.svg', './logo.jpg'];
 
 self.addEventListener('install', e => {
