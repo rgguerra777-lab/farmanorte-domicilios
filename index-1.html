@@ -1,0 +1,1845 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#003399">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Domicilios">
+<title>Farmanorte - Mis Domicilios</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --brand: #003399;
+  --brand-deep: #06214f;
+  --brand-soft: #e8eefc;
+  --cyan: #00afee;
+  --ink: #101c33;
+  --muted: #5c6b85;
+  --faint: #8d99b0;
+  --bg: #eef1f7;
+  --surface: #ffffff;
+  --line: #e2e8f2;
+  --money: #0e9f6e;
+  --money-soft: #e2f6ee;
+  --danger: #d64545;
+  --danger-soft: #fdebeb;
+  --warn-soft: #fdf3e0;
+  --warn-ink: #92600a;
+  --radius: 16px;
+  --shadow-card: 0 1px 2px rgba(16,28,51,.05), 0 6px 20px -8px rgba(16,28,51,.10);
+  --shadow-float: 0 8px 28px -6px rgba(6,33,79,.38);
+  --font-ui: 'Manrope', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-money: 'IBM Plex Mono', 'SF Mono', ui-monospace, Menlo, monospace;
+  --brand-fg: #003399;
+  --nav-bg: rgba(255,255,255,.9);
+  --bar-muted: #b9c8e6;
+  --chip: #f1f4f9;
+  --input-bg: #f7f9fc;
+  --thumb-bg: #dde4ef;
+  --toast-bg: #101c33;
+  --toast-fg: #ffffff;
+}
+
+html[data-theme="dark"] {
+  --brand-soft: #16294e;
+  --ink: #e8edf7;
+  --muted: #9fadc7;
+  --faint: #76849f;
+  --bg: #0b1120;
+  --surface: #141d33;
+  --line: #243150;
+  --money-soft: #103a2c;
+  --money: #34c391;
+  --danger: #ff7b7b;
+  --danger-soft: #3a1c24;
+  --warn-soft: #382c12;
+  --warn-ink: #e6bb66;
+  --brand-fg: #8fb3ff;
+  --nav-bg: rgba(13,18,33,.92);
+  --bar-muted: #344a75;
+  --chip: #1d2944;
+  --input-bg: #0f1830;
+  --thumb-bg: #1d2944;
+  --toast-bg: #e8edf7;
+  --toast-fg: #101c33;
+  --shadow-card: 0 1px 2px rgba(0,0,0,.3), 0 6px 20px -8px rgba(0,0,0,.4);
+}
+html[data-theme="dark"] .past-banner { border-color: #4a3a16; }
+html[data-theme="dark"] .stat-cyan strong { color: var(--money); }
+
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+html { font-size: 16px; }
+
+body {
+  font-family: var(--font-ui);
+  background: var(--bg);
+  color: var(--ink);
+  min-height: 100vh;
+  min-height: 100dvh;
+  font-variant-numeric: tabular-nums;
+  -webkit-font-smoothing: antialiased;
+}
+
+button { font-family: inherit; cursor: pointer; border: none; background: none; color: inherit; }
+button:disabled { opacity: .35; cursor: default; }
+input { font-family: inherit; font-size: 1rem; }
+
+button:focus-visible, input:focus-visible, .recibo-cell:focus-visible {
+  outline: 2px solid var(--cyan);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+
+/* ===== Micro-etiquetas (eyebrows) ===== */
+.summary-eyebrow, .stat-label, .chart-card h2, .list-section h2, .recibos-head {
+  font-size: .68rem;
+  font-weight: 700;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+
+/* ===== Login ===== */
+.login-screen {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  min-height: 100dvh;
+  padding: 24px;
+  background:
+    radial-gradient(120% 90% at 50% -10%, #0a3d9c 0%, var(--brand-deep) 58%, #041634 100%);
+}
+.login-card {
+  width: 100%;
+  max-width: 360px;
+  background: var(--surface);
+  border-radius: 22px;
+  padding: 34px 28px 30px;
+  box-shadow: 0 24px 60px -18px rgba(0,0,0,.5);
+  animation: rise .45s cubic-bezier(.2,.8,.3,1) both;
+}
+@keyframes rise { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
+.login-logo {
+  display: block;
+  width: 76px;
+  height: 76px;
+  object-fit: contain;
+  margin: 0 auto 14px;
+  border-radius: 18px;
+  box-shadow: 0 4px 14px rgba(6,33,79,.18);
+}
+.login-card h1 {
+  text-align: center;
+  font-size: 1.35rem;
+  font-weight: 800;
+  letter-spacing: -.02em;
+  margin-bottom: 4px;
+}
+.login-card h1::after {
+  content: "Farmanorte · Control de domicilios";
+  display: block;
+  font-size: .72rem;
+  font-weight: 600;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--faint);
+  margin: 6px 0 18px;
+}
+.login-card label, .modal label {
+  display: block;
+  font-size: .8rem;
+  font-weight: 700;
+  color: var(--muted);
+  margin-bottom: 14px;
+}
+.login-card input, .modal input {
+  display: block;
+  width: 100%;
+  margin-top: 6px;
+  padding: 13px 14px;
+  border: 1.5px solid var(--line);
+  border-radius: 12px;
+  background: var(--input-bg);
+  color: var(--ink);
+  font-weight: 600;
+  transition: border-color .15s, background .15s;
+}
+.login-card input:focus, .modal input:focus {
+  outline: none;
+  border-color: var(--brand);
+  background: var(--surface);
+}
+.login-error {
+  background: var(--danger-soft);
+  color: var(--danger);
+  font-size: .82rem;
+  font-weight: 700;
+  padding: 10px 12px;
+  border-radius: 10px;
+  margin-bottom: 12px;
+}
+
+/* ===== Botones ===== */
+.btn-primary {
+  background: var(--brand);
+  color: #fff;
+  font-size: .95rem;
+  font-weight: 800;
+  padding: 14px 20px;
+  border-radius: 13px;
+  letter-spacing: .01em;
+  transition: transform .12s, background .15s;
+}
+.btn-primary:active { transform: scale(.97); background: var(--brand-deep); }
+.btn-secondary {
+  background: var(--brand-soft);
+  color: var(--brand-fg);
+  font-size: .95rem;
+  font-weight: 800;
+  padding: 14px 20px;
+  border-radius: 13px;
+}
+.btn-logout {
+  width: 100%;
+  background: var(--danger-soft);
+  color: var(--danger);
+  font-weight: 800;
+  font-size: .92rem;
+  padding: 13px;
+  border-radius: 13px;
+}
+
+/* ===== Barra superior ===== */
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: calc(env(safe-area-inset-top, 0px) + 12px) 18px 12px;
+  background: var(--nav-bg);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--line);
+}
+.header-logo {
+  height: 34px;
+  width: auto;
+  border-radius: 9px;
+}
+.header-actions { display: flex; align-items: center; gap: 10px; }
+.greeting {
+  font-size: .85rem;
+  font-weight: 700;
+  color: var(--muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 46vw;
+}
+.icon-btn {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  background: var(--brand-soft);
+  color: var(--brand-fg);
+  transition: transform .12s;
+}
+.icon-btn:active { transform: scale(.92); }
+.icon-btn svg { width: 19px; height: 19px; }
+
+/* ===== Contenido ===== */
+main {
+  max-width: 560px;
+  margin: 0 auto;
+  padding: 16px 16px calc(150px + env(safe-area-inset-bottom, 0px));
+}
+
+/* ===== Navegación de mes ===== */
+.month-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+.month-label {
+  font-size: 1.02rem;
+  font-weight: 800;
+  letter-spacing: -.01em;
+  text-transform: capitalize;
+}
+.nav-btn {
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  color: var(--brand-fg);
+  font-size: 1.3rem;
+  line-height: 1;
+  display: grid;
+  place-items: center;
+  box-shadow: var(--shadow-card);
+}
+.past-banner {
+  background: var(--warn-soft);
+  color: var(--warn-ink);
+  border: 1px solid #f3dfb6;
+  font-size: .8rem;
+  font-weight: 700;
+  padding: 10px 14px;
+  border-radius: 12px;
+  margin-bottom: 14px;
+  text-align: center;
+}
+
+/* ===== Tarjeta de liquidación (firma visual) ===== */
+.summary-card {
+  position: relative;
+  overflow: hidden;
+  border-radius: 20px;
+  background: linear-gradient(155deg, #0c3d96 0%, var(--brand-deep) 70%);
+  color: #fff;
+  box-shadow: 0 18px 40px -16px rgba(6,33,79,.55);
+  margin-bottom: 22px;
+}
+.summary-card::before {
+  content: "";
+  position: absolute;
+  top: -70px; right: -70px;
+  width: 220px; height: 220px;
+  background: radial-gradient(circle, rgba(0,175,238,.30) 0%, transparent 68%);
+  pointer-events: none;
+}
+.summary-hero {
+  padding: 22px 22px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.summary-eyebrow { color: rgba(255,255,255,.62); }
+.summary-total {
+  font-family: var(--font-money);
+  font-weight: 600;
+  font-size: clamp(2rem, 9vw, 2.6rem);
+  letter-spacing: -.02em;
+  line-height: 1.1;
+}
+.summary-sub {
+  font-size: .84rem;
+  font-weight: 600;
+  color: rgba(255,255,255,.75);
+}
+.summary-sub strong { font-weight: 800; color: #fff; }
+.summary-detail {
+  position: relative;
+  padding: 16px 22px 18px;
+}
+/* línea perforada estilo recibo */
+.summary-detail::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 22px; right: 22px;
+  border-top: 1.5px dashed rgba(255,255,255,.28);
+}
+.summary-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 6px 0;
+}
+.summary-row .label {
+  font-size: .84rem;
+  font-weight: 600;
+  color: rgba(255,255,255,.72);
+}
+.summary-row strong {
+  font-family: var(--font-money);
+  font-weight: 500;
+  font-size: .95rem;
+}
+.summary-row .hint {
+  display: block;
+  font-size: .68rem;
+  font-weight: 600;
+  color: rgba(255,255,255,.45);
+  margin-top: 1px;
+}
+
+/* ===== Meta mensual ===== */
+.goal-wrap { margin-top: 12px; display: flex; flex-direction: column; gap: 6px; }
+.goal-track { height: 8px; border-radius: 99px; background: rgba(255,255,255,.18); overflow: hidden; }
+.goal-fill {
+  height: 100%;
+  border-radius: 99px;
+  background: linear-gradient(90deg, var(--cyan), #7ee2ff);
+  width: 0%;
+  transition: width .45s cubic-bezier(.2,.8,.3,1);
+}
+.goal-text { font-size: .72rem; font-weight: 700; color: rgba(255,255,255,.72); }
+
+/* ===== Herramientas (modal config) ===== */
+.modal-section {
+  font-size: .68rem;
+  font-weight: 700;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--faint);
+  margin-bottom: 10px;
+}
+.btn-tool {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  background: var(--brand-soft);
+  color: var(--brand-fg);
+  font-weight: 800;
+  font-size: .9rem;
+  padding: 13px;
+  border-radius: 13px;
+  margin-bottom: 8px;
+}
+.btn-tool svg { width: 17px; height: 17px; flex: none; }
+
+/* ===== Informe imprimible ===== */
+#reportView { display: none; }
+@media print {
+  body > *:not(#reportView) { display: none !important; }
+  body { background: #fff; }
+  #reportView { display: block; color: #000; font-family: var(--font-ui); padding: 8px; }
+  .rep-head { display: flex; align-items: center; gap: 12px; border-bottom: 2px solid #003399; padding-bottom: 10px; margin-bottom: 14px; }
+  .rep-head img { height: 44px; border-radius: 8px; }
+  .rep-head h1 { font-size: 1.1rem; margin: 0; }
+  .rep-head p { font-size: .8rem; color: #444; margin: 2px 0 0; }
+  .rep-table { width: 100%; border-collapse: collapse; font-size: .8rem; margin-bottom: 14px; }
+  .rep-table th, .rep-table td { border: 1px solid #ccc; padding: 5px 8px; text-align: left; }
+  .rep-table th { background: #eef2fb; }
+  .rep-totals { font-size: .9rem; margin-bottom: 18px; }
+  .rep-totals strong { font-family: var(--font-money); }
+  .rep-photos { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .rep-photo { break-inside: avoid; }
+  .rep-photo img { width: 100%; border: 1px solid #ccc; border-radius: 6px; }
+  .rep-photo span { font-size: .7rem; color: #444; }
+  .rep-foot { margin-top: 16px; font-size: .7rem; color: #777; }
+}
+
+/* ===== Lista de domicilios ===== */
+.list-section h2, .chart-card h2, .recibos-head { color: var(--faint); margin-bottom: 10px; }
+.domicilio-list { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+.domicilio-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 11px 12px;
+  box-shadow: var(--shadow-card);
+}
+.dom-info { display: flex; align-items: center; gap: 12px; min-width: 0; }
+.dom-num {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  flex: none;
+  border-radius: 10px;
+  background: var(--brand-soft);
+  color: var(--brand-fg);
+  font-weight: 800;
+  font-size: .82rem;
+}
+.dom-time { font-size: .88rem; font-weight: 700; color: var(--ink); }
+.dom-actions { display: flex; align-items: center; gap: 8px; }
+.photo-badge, .del-btn {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 11px;
+  transition: transform .12s;
+}
+.photo-badge:active, .del-btn:active { transform: scale(.9); }
+.photo-badge { background: var(--chip); color: var(--faint); }
+.photo-badge.has-photo { background: var(--money-soft); color: var(--money); }
+.del-btn { background: var(--danger-soft); color: var(--danger); }
+.photo-badge svg, .del-btn svg { width: 17px; height: 17px; }
+
+.empty-msg {
+  text-align: center;
+  color: var(--faint);
+  font-size: .88rem;
+  font-weight: 600;
+  padding: 26px 18px;
+  background: var(--surface);
+  border: 1.5px dashed var(--line);
+  border-radius: 14px;
+}
+
+/* ===== Estadísticas ===== */
+.stats-cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+.stat-card {
+  border-radius: 16px;
+  padding: 16px 16px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  box-shadow: var(--shadow-card);
+}
+.stat-card strong {
+  font-family: var(--font-money);
+  font-weight: 600;
+  font-size: 1.35rem;
+  letter-spacing: -.02em;
+}
+.stat-navy { background: linear-gradient(155deg, #0c3d96, var(--brand-deep)); color: #fff; }
+.stat-navy .stat-label { color: rgba(255,255,255,.62); }
+.stat-cyan { background: var(--surface); border: 1px solid var(--line); color: var(--ink); }
+.stat-cyan .stat-label { color: var(--faint); }
+.stat-cyan strong { color: var(--money); }
+
+.chart-card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 16px;
+  margin-bottom: 14px;
+  box-shadow: var(--shadow-card);
+}
+.chart {
+  display: flex;
+  align-items: flex-end;
+  gap: 5px;
+  height: 130px;
+  padding-top: 18px;
+  border-bottom: 1.5px solid var(--line);
+}
+.chart-hours { gap: 2px; }
+.chart-col {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  height: 100%;
+  gap: 4px;
+}
+.chart-bar {
+  position: relative;
+  width: 100%;
+  max-width: 26px;
+  background: var(--bar-muted);
+  border-radius: 5px 5px 0 0;
+  transition: height .35s cubic-bezier(.2,.8,.3,1);
+}
+.chart-bar.highlight { background: var(--brand); }
+.chart-value {
+  position: absolute;
+  top: -16px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: .62rem;
+  font-weight: 800;
+  color: var(--muted);
+}
+.chart-label {
+  font-size: .6rem;
+  font-weight: 700;
+  color: var(--faint);
+  height: 12px;
+}
+.chart-highlight {
+  margin-top: 10px;
+  font-size: .8rem;
+  font-weight: 700;
+  color: var(--brand-fg);
+  background: var(--brand-soft);
+  padding: 8px 12px;
+  border-radius: 10px;
+}
+
+/* ===== Recibos ===== */
+.recibos-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+.recibo-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding: 0;
+  text-align: left;
+}
+.recibo-thumb-wrap {
+  aspect-ratio: 3 / 4;
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--thumb-bg);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow-card);
+}
+.recibo-thumb { width: 100%; height: 100%; object-fit: cover; display: block; }
+.recibo-time { font-size: .7rem; font-weight: 700; color: var(--muted); padding-left: 2px; }
+
+/* ===== Barra de pestañas (inferior) ===== */
+.tabs {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  z-index: 40;
+  display: flex;
+  justify-content: space-around;
+  background: var(--nav-bg);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-top: 1px solid var(--line);
+  padding: 8px 8px calc(8px + env(safe-area-inset-bottom, 0px));
+}
+.tab {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  padding: 6px 4px;
+  border-radius: 12px;
+  color: var(--faint);
+  font-size: .66rem;
+  font-weight: 800;
+  letter-spacing: .04em;
+  transition: color .15s;
+}
+.tab svg { width: 21px; height: 21px; }
+.tab.active { color: var(--brand-fg); }
+
+/* ===== Botón flotante ===== */
+.fab {
+  position: fixed;
+  bottom: calc(78px + env(safe-area-inset-bottom, 0px));
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 35;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--brand);
+  color: #fff;
+  font-size: .92rem;
+  font-weight: 800;
+  padding: 14px 22px;
+  border-radius: 999px;
+  box-shadow: var(--shadow-float);
+  transition: transform .12s;
+}
+.fab:active { transform: translateX(-50%) scale(.96); }
+.fab svg { width: 18px; height: 18px; }
+
+/* ===== Toast ===== */
+.toast {
+  position: fixed;
+  bottom: calc(140px + env(safe-area-inset-bottom, 0px));
+  left: 50%;
+  transform: translateX(-50%) translateY(12px);
+  z-index: 60;
+  background: var(--toast-bg);
+  color: var(--toast-fg);
+  font-size: .84rem;
+  font-weight: 700;
+  padding: 11px 18px;
+  border-radius: 12px;
+  max-width: calc(100vw - 40px);
+  text-align: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .25s, transform .25s;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* ===== Modales ===== */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  background: rgba(8,16,34,.5);
+  backdrop-filter: blur(3px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .2s;
+}
+.modal-overlay.open { opacity: 1; pointer-events: auto; }
+.modal {
+  width: 100%;
+  max-width: 480px;
+  background: var(--surface);
+  border-radius: 22px 22px 0 0;
+  padding: 24px 22px calc(24px + env(safe-area-inset-bottom, 0px));
+  transform: translateY(24px);
+  transition: transform .25s cubic-bezier(.2,.8,.3,1);
+}
+.modal-overlay.open .modal { transform: none; }
+.modal h2 {
+  font-size: 1.05rem;
+  font-weight: 800;
+  letter-spacing: -.01em;
+  margin-bottom: 14px;
+}
+.modal .hint {
+  font-size: .8rem;
+  font-weight: 600;
+  color: var(--muted);
+  line-height: 1.5;
+  margin-bottom: 14px;
+}
+.modal-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 6px;
+}
+.modal-divider { border: none; border-top: 1px solid var(--line); margin: 18px 0 14px; }
+
+.btn-camera {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  background: var(--brand);
+  color: #fff;
+  font-size: .95rem;
+  font-weight: 800;
+  padding: 15px;
+  border-radius: 13px;
+  margin-bottom: 10px;
+}
+.btn-camera svg { width: 19px; height: 19px; }
+.btn-skip {
+  width: 100%;
+  background: var(--brand-soft);
+  color: var(--brand-fg);
+  font-size: .9rem;
+  font-weight: 800;
+  padding: 13px;
+  border-radius: 13px;
+}
+
+/* ===== Visor de foto ===== */
+.photo-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 70;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background: rgba(4,10,24,.94);
+  padding: 18px;
+}
+.photo-overlay.open { display: flex; }
+.photo-viewer {
+  position: relative;
+  width: 100%;
+  max-width: 460px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.photo-close {
+  position: absolute;
+  top: -4px;
+  right: 0;
+  z-index: 2;
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  background: rgba(255,255,255,.14);
+  color: #fff;
+  font-size: 1.1rem;
+  display: grid;
+  place-items: center;
+}
+.photo-img-wrap {
+  display: grid;
+  place-items: center;
+  min-height: 200px;
+  max-height: 64vh;
+  border-radius: 16px;
+  overflow: hidden;
+}
+.photo-img { max-width: 100%; max-height: 64vh; border-radius: 16px; }
+.photo-loading { color: rgba(255,255,255,.7); font-size: .85rem; font-weight: 700; }
+.photo-date {
+  text-align: center;
+  color: rgba(255,255,255,.75);
+  font-size: .84rem;
+  font-weight: 700;
+}
+.photo-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.btn-retake, .btn-photo-delete {
+  padding: 13px;
+  border-radius: 13px;
+  font-size: .88rem;
+  font-weight: 800;
+}
+.btn-retake { background: rgba(255,255,255,.14); color: #fff; }
+.btn-photo-delete { background: var(--danger); color: #fff; }
+</style>
+</head>
+<body>
+
+<div id="loginScreen" class="login-screen">
+  <div class="login-card">
+    <img src="logo.jpg" alt="Farmanorte" class="login-logo">
+    <h1>Mis Domicilios</h1>
+    <label>Tu nombre
+      <input type="text" id="loginName" placeholder="Ej: Andrés" autocomplete="name">
+    </label>
+    <label>Contraseña del equipo
+      <input type="password" id="loginPass" placeholder="••••••••" autocomplete="current-password">
+    </label>
+    <p id="loginError" class="login-error" hidden></p>
+    <button id="loginBtn" class="btn-primary" style="width:100%">Entrar</button>
+  </div>
+</div>
+
+<div id="app" hidden>
+  <header class="topbar">
+    <img src="logo.jpg" alt="Farmanorte" class="header-logo">
+    <div class="header-actions">
+      <span id="greeting" class="greeting"></span>
+      <button id="settingsBtn" class="icon-btn" aria-label="Configuración"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h.01a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51h.01a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v.01a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button>
+    </div>
+  </header>
+
+  <nav class="tabs">
+    <button class="tab active" data-tab="registro">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M9 12h6M9 16h6"/></svg>
+      <span>Registro</span>
+    </button>
+    <button class="tab" data-tab="recibos">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+      <span>Recibos</span>
+    </button>
+    <button class="tab" data-tab="stats">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M12 20V4M20 20v-7"/></svg>
+      <span>Estadísticas</span>
+    </button>
+  </nav>
+
+  <main>
+    <section id="tab-registro" class="tab-panel">
+      <div class="month-nav">
+        <button id="prevMonth" class="nav-btn" aria-label="Mes anterior">‹</button>
+        <div class="month-label" id="monthLabel">Junio 2026</div>
+        <button id="nextMonth" class="nav-btn" aria-label="Mes siguiente">›</button>
+      </div>
+
+      <div id="pastBanner" class="past-banner" style="display:none">Mes cerrado · solo consulta</div>
+
+      <section class="summary-card">
+        <div class="summary-hero">
+          <span class="summary-eyebrow">Total a recibir</span>
+          <strong id="total" class="summary-total">$170.000</strong>
+          <span class="summary-sub"><strong id="countDomicilios">0</strong> domicilios registrados</span>
+          <div id="goalWrap" class="goal-wrap" hidden>
+            <div class="goal-track"><div id="goalFill" class="goal-fill"></div></div>
+            <span id="goalText" class="goal-text"></span>
+          </div>
+        </div>
+        <div class="summary-detail">
+          <div class="summary-row">
+            <span class="label">Valor por domicilio</span>
+            <strong id="valorUnit">$1.500</strong>
+          </div>
+          <div class="summary-row">
+            <span class="label">Subtotal domicilios</span>
+            <strong id="subtotal">$0</strong>
+          </div>
+          <div class="summary-row">
+            <span class="label">
+              Bono rodamiento
+              <span class="hint">Pago fijo · se paga el día 10</span>
+            </span>
+            <strong id="bono">$170.000</strong>
+          </div>
+        </div>
+      </section>
+
+      <section class="list-section">
+        <h2>Domicilios del mes</h2>
+        <ul id="domicilioList" class="domicilio-list"></ul>
+        <p id="emptyMsg" class="empty-msg">Aún no has registrado domicilios este mes.</p>
+      </section>
+    </section>
+
+    <section id="tab-recibos" class="tab-panel" hidden>
+      <div class="month-nav">
+        <button id="prevMonthR" class="nav-btn" aria-label="Mes anterior">‹</button>
+        <div class="month-label" id="monthLabelR">Junio 2026</div>
+        <button id="nextMonthR" class="nav-btn" aria-label="Mes siguiente">›</button>
+      </div>
+      <div id="recibosGrid" class="recibos-grid"></div>
+      <p id="recibosEmpty" class="empty-msg">Aún no hay fotos de recibos guardadas este mes. Toca el ícono de cámara junto a un domicilio para agregar una.</p>
+    </section>
+
+    <section id="tab-stats" class="tab-panel" hidden>
+      <div class="stats-cards">
+        <div class="stat-card stat-navy">
+          <span class="stat-label">Domicilios histórico</span>
+          <strong id="statTotalCount">0</strong>
+        </div>
+        <div class="stat-card stat-cyan">
+          <span class="stat-label">Ganado histórico</span>
+          <strong id="statTotalGanancia">$0</strong>
+        </div>
+      </div>
+
+      <p id="statsEmpty" class="empty-msg">Registra domicilios para ver tus estadísticas aquí.</p>
+
+      <div id="statsContent" hidden>
+        <div class="chart-card">
+          <h2>Domicilios por hora del día</h2>
+          <div id="chartHora" class="chart chart-hours"></div>
+          <p id="peakHourText" class="chart-highlight"></p>
+        </div>
+
+        <div class="chart-card">
+          <h2>Domicilios por día de la semana</h2>
+          <div id="chartDia" class="chart"></div>
+          <p id="peakDayText" class="chart-highlight"></p>
+        </div>
+
+        <div class="chart-card">
+          <h2>Últimos meses</h2>
+          <div id="chartMes" class="chart"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <button id="addBtn" class="fab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg> Registrar domicilio</button>
+
+  <div id="toast" class="toast"></div>
+
+  <div id="settingsModal" class="modal-overlay">
+    <div class="modal">
+      <h2>Configuración</h2>
+      <label>Valor que recibo por domicilio
+        <input type="number" id="inputValor" inputmode="numeric" min="0" step="100">
+      </label>
+      <label>Bono fijo mensual (rodamiento)
+        <input type="number" id="inputBono" inputmode="numeric" min="0" step="1000">
+      </label>
+      <label>Meta del mes (en pesos · 0 para desactivar)
+        <input type="number" id="inputMeta" inputmode="numeric" min="0" step="10000">
+      </label>
+      <p class="hint">De los $3.000 que paga cada domicilio, la empresa se queda con $1.500 y a ti te corresponde el resto. El bono de rodamiento es un pago fijo mensual que llega el día 10.</p>
+      <div class="modal-actions">
+        <button id="cancelSettings" class="btn-secondary">Cancelar</button>
+        <button id="saveSettings" class="btn-primary">Guardar</button>
+      </div>
+      <hr class="modal-divider">
+      <p class="modal-section">Herramientas</p>
+      <button id="themeBtn" class="btn-tool"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg> <span id="themeBtnLabel">Activar modo oscuro</span></button>
+      <button id="reportBtn" class="btn-tool"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M9 15h6M9 11h2"/></svg> Informe del mes (PDF)</button>
+      <button id="exportBtn" class="btn-tool"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg> Exportar respaldo</button>
+      <button id="importBtn" class="btn-tool"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg> Importar respaldo</button>
+      <input type="file" id="importFile" accept="application/json,.json" hidden>
+      <hr class="modal-divider">
+      <button id="logoutBtn" class="btn-logout">Cerrar sesión</button>
+    </div>
+  </div>
+
+  <input type="file" id="photoInput" accept="image/*" capture="environment" hidden>
+
+  <div id="addModal" class="modal-overlay">
+    <div class="modal">
+      <h2>Registrar domicilio</h2>
+      <p class="hint">Toma una foto del recibo para guardar la evidencia. Podrás verla cuando quieras en la pestaña "Recibos".</p>
+      <label>Fecha y hora del domicilio
+        <input type="datetime-local" id="inputFecha">
+      </label>
+      <p class="hint">Déjala como está para registrar con la hora actual, o cámbiala si es un domicilio que olvidaste anotar.</p>
+      <button id="takePhotoBtn" class="btn-camera"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg> Tomar foto del recibo</button>
+      <button id="skipPhotoBtn" class="btn-skip">Registrar sin foto</button>
+    </div>
+  </div>
+
+  <div id="photoModal" class="photo-overlay">
+    <div class="photo-viewer">
+      <button id="closePhotoBtn" class="photo-close" aria-label="Cerrar">✕</button>
+      <div class="photo-img-wrap">
+        <span id="photoLoading" class="photo-loading">Cargando...</span>
+        <img id="photoImg" class="photo-img" alt="Recibo" hidden>
+      </div>
+      <p id="photoDate" class="photo-date"></p>
+      <div class="photo-actions">
+        <button id="retakePhotoBtn" class="btn-retake">Cambiar foto</button>
+        <button id="deletePhotoBtn" class="btn-photo-delete">Eliminar foto</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="reportView"></div>
+
+<script>
+const STORAGE_KEY = 'farmanorte_domicilios_v1';
+const SESSION_KEY = 'farmanorte_session_v1';
+const TEAM_PASSWORD = 'farmanorte2026';
+
+const MONTHS = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+const SHORT_MONTHS = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+const DAY_LABELS = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+
+let state = loadState();
+state.config = Object.assign({ valorDomicilio: 1500, bonoMensual: 170000, metaMensual: 0, theme: 'light' }, state.config);
+
+function applyTheme() {
+  document.documentElement.dataset.theme = state.config.theme === 'dark' ? 'dark' : 'light';
+  const label = document.getElementById('themeBtnLabel');
+  if (label) label.textContent = state.config.theme === 'dark' ? 'Activar modo claro' : 'Activar modo oscuro';
+}
+applyTheme();
+
+let viewedMonth = currentMonthKey();
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) return JSON.parse(raw);
+  } catch (e) {}
+  return { config: { valorDomicilio: 1500, bonoMensual: 170000 }, registros: {} };
+}
+
+function saveState() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+}
+
+function currentMonthKey() {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+}
+
+function monthKeyOffset(key, offset) {
+  const [y, m] = key.split('-').map(Number);
+  const d = new Date(y, m - 1 + offset, 1);
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+}
+
+function monthLabel(key) {
+  const [y, m] = key.split('-').map(Number);
+  return `${MONTHS[m - 1]} ${y}`;
+}
+
+function shortMonthLabel(key) {
+  const [y, m] = key.split('-').map(Number);
+  return `${SHORT_MONTHS[m - 1]} ${String(y).slice(2)}`;
+}
+
+function minMonthKey() {
+  let min = currentMonthKey();
+  Object.keys(state.registros).forEach(k => { if (k < min) min = k; });
+  return min;
+}
+
+function formatCOP(n) {
+  return '$' + Math.round(n).toLocaleString('es-CO');
+}
+
+function formatHourLabel(h) {
+  const period = h < 12 ? 'a.m.' : 'p.m.';
+  let h12 = h % 12;
+  if (h12 === 0) h12 = 12;
+  return `${h12} ${period}`;
+}
+
+function formatHourRange(h) {
+  return `${formatHourLabel(h)} - ${formatHourLabel((h + 1) % 24)}`;
+}
+
+function getRegistros(monthKey) {
+  return state.registros[monthKey] || [];
+}
+
+/* ---------- Fotos de recibos (IndexedDB) ---------- */
+
+const PHOTO_DB_NAME = 'farmanorte_fotos';
+const PHOTO_STORE = 'fotos';
+
+function openPhotoDB() {
+  return new Promise((resolve, reject) => {
+    const req = indexedDB.open(PHOTO_DB_NAME, 1);
+    req.onupgradeneeded = () => req.result.createObjectStore(PHOTO_STORE);
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = () => reject(req.error);
+  });
+}
+
+async function savePhoto(id, dataUrl) {
+  const db = await openPhotoDB();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(PHOTO_STORE, 'readwrite');
+    tx.objectStore(PHOTO_STORE).put(dataUrl, id);
+    tx.oncomplete = () => resolve();
+    tx.onerror = () => reject(tx.error);
+  });
+}
+
+async function getPhoto(id) {
+  const db = await openPhotoDB();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(PHOTO_STORE, 'readonly');
+    const req = tx.objectStore(PHOTO_STORE).get(id);
+    req.onsuccess = () => resolve(req.result || null);
+    req.onerror = () => reject(req.error);
+  });
+}
+
+async function deletePhoto(id) {
+  const db = await openPhotoDB();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(PHOTO_STORE, 'readwrite');
+    tx.objectStore(PHOTO_STORE).delete(id);
+    tx.oncomplete = () => resolve();
+    tx.onerror = () => reject(tx.error);
+  });
+}
+
+function compressImage(file, maxSize = 1000, quality = 0.7) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const img = new Image();
+      img.onload = () => {
+        let { width, height } = img;
+        if (width > maxSize || height > maxSize) {
+          if (width >= height) {
+            height = Math.round(height * (maxSize / width));
+            width = maxSize;
+          } else {
+            width = Math.round(width * (maxSize / height));
+            height = maxSize;
+          }
+        }
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+        canvas.getContext('2d').drawImage(img, 0, 0, width, height);
+        resolve(canvas.toDataURL('image/jpeg', quality));
+      };
+      img.onerror = reject;
+      img.src = reader.result;
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+function setFotoFlag(id, val) {
+  for (const key in state.registros) {
+    const r = state.registros[key].find(r => r.id === id);
+    if (r) { r.foto = val; break; }
+  }
+  saveState();
+}
+
+function findRegistro(id) {
+  for (const key in state.registros) {
+    const r = state.registros[key].find(r => r.id === id);
+    if (r) return r;
+  }
+  return null;
+}
+
+/* ---------- Sesión / login ---------- */
+
+function loadSession() {
+  try {
+    const raw = localStorage.getItem(SESSION_KEY);
+    if (raw) return JSON.parse(raw);
+  } catch (e) {}
+  return null;
+}
+
+let session = loadSession();
+
+function showApp() {
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('app').hidden = false;
+  document.getElementById('greeting').textContent = `Hola, ${session.name} 👋`;
+  render();
+}
+
+document.getElementById('loginBtn').addEventListener('click', () => {
+  const name = document.getElementById('loginName').value.trim();
+  const pass = document.getElementById('loginPass').value;
+  const errorEl = document.getElementById('loginError');
+
+  if (!name) {
+    errorEl.textContent = 'Escribe tu nombre.';
+    errorEl.hidden = false;
+    return;
+  }
+  if (pass !== TEAM_PASSWORD) {
+    errorEl.textContent = 'Contraseña incorrecta.';
+    errorEl.hidden = false;
+    return;
+  }
+  errorEl.hidden = true;
+  session = { name };
+  localStorage.setItem(SESSION_KEY, JSON.stringify(session));
+  showApp();
+});
+
+document.getElementById('logoutBtn').addEventListener('click', () => {
+  if (!confirm('¿Cerrar sesión?')) return;
+  localStorage.removeItem(SESSION_KEY);
+  session = null;
+  document.getElementById('settingsModal').classList.remove('open');
+  document.getElementById('app').hidden = true;
+  document.getElementById('loginName').value = '';
+  document.getElementById('loginPass').value = '';
+  document.getElementById('loginScreen').style.display = 'flex';
+});
+
+/* ---------- Tabs ---------- */
+
+document.querySelectorAll('.tab').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const target = btn.dataset.tab;
+    document.getElementById('tab-registro').hidden = target !== 'registro';
+    document.getElementById('tab-recibos').hidden = target !== 'recibos';
+    document.getElementById('tab-stats').hidden = target !== 'stats';
+    if (target === 'stats') renderStats();
+    if (target === 'recibos') renderRecibos();
+    updateFabVisibility();
+  });
+});
+
+function activeTab() {
+  return document.querySelector('.tab.active').dataset.tab;
+}
+
+function updateFabVisibility() {
+  const isCurrent = viewedMonth === currentMonthKey();
+  document.getElementById('addBtn').style.display = (activeTab() === 'registro' && isCurrent) ? 'flex' : 'none';
+}
+
+/* ---------- Registro ---------- */
+
+function render() {
+  document.getElementById('monthLabel').textContent = monthLabel(viewedMonth);
+  document.getElementById('prevMonth').disabled = viewedMonth <= minMonthKey();
+  document.getElementById('nextMonth').disabled = viewedMonth >= currentMonthKey();
+
+  const isCurrent = viewedMonth === currentMonthKey();
+  document.getElementById('pastBanner').style.display = isCurrent ? 'none' : 'block';
+  updateFabVisibility();
+
+  const registros = getRegistros(viewedMonth);
+  const count = registros.length;
+  const valorUnit = state.config.valorDomicilio;
+  const bono = state.config.bonoMensual;
+  const subtotal = count * valorUnit;
+  const total = subtotal + bono;
+
+  document.getElementById('countDomicilios').textContent = count;
+  document.getElementById('valorUnit').textContent = formatCOP(valorUnit);
+  document.getElementById('subtotal').textContent = formatCOP(subtotal);
+  document.getElementById('bono').textContent = formatCOP(bono);
+  document.getElementById('total').textContent = formatCOP(total);
+
+  const meta = state.config.metaMensual || 0;
+  const goalWrap = document.getElementById('goalWrap');
+  if (meta > 0) {
+    goalWrap.hidden = false;
+    const pct = Math.min(100, (total / meta) * 100);
+    document.getElementById('goalFill').style.width = pct.toFixed(1) + '%';
+    const falta = Math.max(0, meta - total);
+    const goalText = document.getElementById('goalText');
+    if (falta <= 0) {
+      goalText.textContent = '¡Meta de ' + formatCOP(meta) + ' cumplida! 🎉';
+    } else {
+      const nDom = valorUnit > 0 ? Math.ceil(falta / valorUnit) : 0;
+      goalText.textContent = 'Meta ' + formatCOP(meta) + ' · te faltan ' + formatCOP(falta) + (nDom > 0 ? ' (~' + nDom + ' domicilios)' : '');
+    }
+  } else {
+    goalWrap.hidden = true;
+  }
+
+  const list = document.getElementById('domicilioList');
+  list.innerHTML = '';
+  document.getElementById('emptyMsg').style.display = count === 0 ? 'block' : 'none';
+
+  registros.forEach((r, i) => {
+    const li = document.createElement('li');
+    li.className = 'domicilio-item';
+    const date = new Date(r.timestamp);
+    const timeStr = date.toLocaleString('es-CO', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
+    li.innerHTML = `
+      <div class="dom-info">
+        <span class="dom-num">${i + 1}</span>
+        <span class="dom-time">${timeStr}</span>
+      </div>
+      <div class="dom-actions">
+        <button class="photo-badge ${r.foto ? 'has-photo' : ''}" data-id="${r.id}" aria-label="${r.foto ? 'Ver foto del recibo' : 'Agregar foto del recibo'}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg></button>
+        <button class="del-btn" data-id="${r.id}" aria-label="Eliminar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/></svg></button>
+      </div>
+    `;
+    list.appendChild(li);
+  });
+}
+
+function localNowForInput() {
+  const d = new Date();
+  d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
+  return d.toISOString().slice(0, 16);
+}
+
+function chosenTimestamp() {
+  const v = document.getElementById('inputFecha').value;
+  let t = v ? new Date(v).getTime() : Date.now();
+  if (isNaN(t)) t = Date.now();
+  return Math.min(t, Date.now());
+}
+
+function monthKeyForTimestamp(ts) {
+  const d = new Date(ts);
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+}
+
+async function addDomicilio(photoDataUrl, ts) {
+  const timestamp = ts || Date.now();
+  const monthKey = monthKeyForTimestamp(timestamp);
+  if (!state.registros[monthKey]) state.registros[monthKey] = [];
+  const id = Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+  state.registros[monthKey].push({ id, timestamp, foto: !!photoDataUrl });
+  state.registros[monthKey].sort((a, b) => a.timestamp - b.timestamp);
+  saveState();
+  if (photoDataUrl) await savePhoto(id, photoDataUrl);
+  viewedMonth = monthKey;
+  // (el resumen y la lista se actualizan abajo)
+  render();
+  if (activeTab() === 'recibos') renderRecibos();
+  const sufijo = photoDataUrl ? ' con foto 📸' : '';
+  showToast(`Domicilio registrado${sufijo} ✅ · Van ${state.registros[monthKey].length} este mes`);
+}
+
+function deleteDomicilio(id) {
+  const registros = getRegistros(viewedMonth);
+  const idx = registros.findIndex(r => r.id === id);
+  if (idx === -1) return;
+  if (!confirm('¿Eliminar este domicilio?')) return;
+  const hadPhoto = registros[idx].foto;
+  registros.splice(idx, 1);
+  saveState();
+  if (hadPhoto) deletePhoto(id).catch(() => {});
+  render();
+  if (activeTab() === 'recibos') renderRecibos();
+}
+
+let toastTimeout;
+function showToast(msg) {
+  const toast = document.getElementById('toast');
+  toast.textContent = msg;
+  toast.classList.add('show');
+  clearTimeout(toastTimeout);
+  toastTimeout = setTimeout(() => toast.classList.remove('show'), 2200);
+}
+
+document.getElementById('addBtn').addEventListener('click', () => {
+  document.getElementById('inputFecha').value = localNowForInput();
+  document.getElementById('addModal').classList.add('open');
+});
+
+document.getElementById('domicilioList').addEventListener('click', e => {
+  const del = e.target.closest('.del-btn');
+  if (del) { deleteDomicilio(del.dataset.id); return; }
+  const photoBtn = e.target.closest('.photo-badge');
+  if (photoBtn) {
+    const id = photoBtn.dataset.id;
+    if (photoBtn.classList.contains('has-photo')) {
+      openPhotoModal(id);
+    } else {
+      pendingPhotoTargetId = id;
+      document.getElementById('photoInput').click();
+    }
+  }
+});
+
+document.getElementById('prevMonth').addEventListener('click', () => {
+  if (viewedMonth > minMonthKey()) {
+    viewedMonth = monthKeyOffset(viewedMonth, -1);
+    render();
+    renderRecibos();
+  }
+});
+document.getElementById('nextMonth').addEventListener('click', () => {
+  if (viewedMonth < currentMonthKey()) {
+    viewedMonth = monthKeyOffset(viewedMonth, 1);
+    render();
+    renderRecibos();
+  }
+});
+
+/* ---------- Estadísticas ---------- */
+
+function renderBarChart(container, items, opts = {}) {
+  container.innerHTML = '';
+  const max = Math.max(1, ...items.map(i => i.value));
+  items.forEach(item => {
+    const col = document.createElement('div');
+    col.className = 'chart-col';
+
+    const bar = document.createElement('div');
+    bar.className = 'chart-bar' + (item.highlight ? ' highlight' : '');
+    bar.style.height = `${Math.max(4, (item.value / max) * 100)}%`;
+
+    if (opts.showValue && item.value > 0) {
+      const val = document.createElement('span');
+      val.className = 'chart-value';
+      val.textContent = item.value;
+      bar.appendChild(val);
+    }
+
+    const label = document.createElement('span');
+    label.className = 'chart-label';
+    label.textContent = item.label;
+
+    col.appendChild(bar);
+    col.appendChild(label);
+    container.appendChild(col);
+  });
+}
+
+function renderStats() {
+  const valorUnit = state.config.valorDomicilio;
+  const bono = state.config.bonoMensual;
+
+  let totalCount = 0;
+  let totalGanancia = 0;
+  const porHora = new Array(24).fill(0);
+  const porDia = new Array(7).fill(0);
+  const monthEntries = [];
+
+  Object.keys(state.registros).sort().forEach(key => {
+    const arr = state.registros[key];
+    if (arr.length === 0) return;
+    totalCount += arr.length;
+    totalGanancia += arr.length * valorUnit + bono;
+    monthEntries.push({ key, count: arr.length });
+    arr.forEach(r => {
+      const d = new Date(r.timestamp);
+      porHora[d.getHours()]++;
+      porDia[d.getDay()]++;
+    });
+  });
+
+  document.getElementById('statTotalCount').textContent = totalCount;
+  document.getElementById('statTotalGanancia').textContent = formatCOP(totalGanancia);
+
+  const hasData = totalCount > 0;
+  document.getElementById('statsEmpty').style.display = hasData ? 'none' : 'block';
+  document.getElementById('statsContent').hidden = !hasData;
+  if (!hasData) return;
+
+  const maxHora = Math.max(...porHora);
+  const hourItems = porHora.map((v, h) => ({
+    label: h % 3 === 0 ? String(h) : '',
+    value: v,
+    highlight: v === maxHora && v > 0,
+  }));
+  renderBarChart(document.getElementById('chartHora'), hourItems);
+  const peakHour = porHora.indexOf(maxHora);
+  document.getElementById('peakHourText').textContent =
+    `🔥 Tu hora pico: ${formatHourRange(peakHour)} (${maxHora} domicilios)`;
+
+  const maxDia = Math.max(...porDia);
+  const dayItems = porDia.map((v, i) => ({
+    label: DAY_LABELS[i],
+    value: v,
+    highlight: v === maxDia && v > 0,
+  }));
+  renderBarChart(document.getElementById('chartDia'), dayItems, { showValue: true });
+  const peakDay = porDia.indexOf(maxDia);
+  document.getElementById('peakDayText').textContent =
+    `📅 Tu día más activo: ${DAY_LABELS[peakDay]} (${maxDia} domicilios)`;
+
+  const recentMonths = monthEntries.slice(-6);
+  const monthItems = recentMonths.map(m => ({
+    label: shortMonthLabel(m.key),
+    value: m.count,
+    highlight: false,
+  }));
+  renderBarChart(document.getElementById('chartMes'), monthItems, { showValue: true });
+}
+
+/* ---------- Recibos (fotos) ---------- */
+
+let pendingPhotoTargetId = null;
+let pendingNewDomicilio = false;
+let photoModalOpenId = null;
+
+function renderRecibos() {
+  document.getElementById('monthLabelR').textContent = monthLabel(viewedMonth);
+  document.getElementById('prevMonthR').disabled = viewedMonth <= minMonthKey();
+  document.getElementById('nextMonthR').disabled = viewedMonth >= currentMonthKey();
+
+  const registros = getRegistros(viewedMonth).filter(r => r.foto);
+  const grid = document.getElementById('recibosGrid');
+  grid.innerHTML = '';
+  document.getElementById('recibosEmpty').style.display = registros.length === 0 ? 'block' : 'none';
+
+  registros.forEach(r => {
+    const cell = document.createElement('button');
+    cell.className = 'recibo-cell';
+    cell.dataset.id = r.id;
+    const date = new Date(r.timestamp);
+    const timeStr = date.toLocaleString('es-CO', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
+    cell.innerHTML = `<div class="recibo-thumb-wrap"><img class="recibo-thumb" alt="Recibo"></div><span class="recibo-time">${timeStr}</span>`;
+    grid.appendChild(cell);
+    getPhoto(r.id).then(dataUrl => {
+      if (dataUrl) cell.querySelector('.recibo-thumb').src = dataUrl;
+    });
+  });
+}
+
+document.getElementById('recibosGrid').addEventListener('click', e => {
+  const cell = e.target.closest('.recibo-cell');
+  if (cell) openPhotoModal(cell.dataset.id);
+});
+
+document.getElementById('prevMonthR').addEventListener('click', () => {
+  if (viewedMonth > minMonthKey()) {
+    viewedMonth = monthKeyOffset(viewedMonth, -1);
+    render();
+    renderRecibos();
+  }
+});
+document.getElementById('nextMonthR').addEventListener('click', () => {
+  if (viewedMonth < currentMonthKey()) {
+    viewedMonth = monthKeyOffset(viewedMonth, 1);
+    render();
+    renderRecibos();
+  }
+});
+
+/* ---------- Visor de foto (lightbox) ---------- */
+
+async function openPhotoModal(id) {
+  photoModalOpenId = id;
+  const overlay = document.getElementById('photoModal');
+  const img = document.getElementById('photoImg');
+  const loading = document.getElementById('photoLoading');
+  img.hidden = true;
+  img.src = '';
+  loading.hidden = false;
+
+  const registro = findRegistro(id);
+  if (registro) {
+    const date = new Date(registro.timestamp);
+    document.getElementById('photoDate').textContent = date.toLocaleString('es-CO', {
+      day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit'
+    });
+  }
+
+  overlay.classList.add('open');
+
+  const dataUrl = await getPhoto(id);
+  loading.hidden = true;
+  if (dataUrl) {
+    img.src = dataUrl;
+    img.hidden = false;
+  }
+}
+
+function closePhotoModal() {
+  document.getElementById('photoModal').classList.remove('open');
+  photoModalOpenId = null;
+}
+
+document.getElementById('closePhotoBtn').addEventListener('click', closePhotoModal);
+document.getElementById('photoModal').addEventListener('click', e => {
+  if (e.target.id === 'photoModal') closePhotoModal();
+});
+
+document.getElementById('retakePhotoBtn').addEventListener('click', () => {
+  pendingPhotoTargetId = photoModalOpenId;
+  document.getElementById('photoInput').click();
+});
+
+document.getElementById('deletePhotoBtn').addEventListener('click', async () => {
+  if (!confirm('¿Eliminar esta foto?')) return;
+  const id = photoModalOpenId;
+  await deletePhoto(id);
+  setFotoFlag(id, false);
+  closePhotoModal();
+  render();
+  if (activeTab() === 'recibos') renderRecibos();
+  showToast('Foto eliminada 🗑️');
+});
+
+/* ---------- Modal "registrar domicilio" ---------- */
+
+let pendingTimestamp = null;
+document.getElementById('takePhotoBtn').addEventListener('click', () => {
+  pendingNewDomicilio = true;
+  pendingTimestamp = chosenTimestamp();
+  document.getElementById('photoInput').click();
+});
+
+document.getElementById('skipPhotoBtn').addEventListener('click', () => {
+  document.getElementById('addModal').classList.remove('open');
+  addDomicilio(null, chosenTimestamp());
+});
+
+document.getElementById('addModal').addEventListener('click', e => {
+  if (e.target.id === 'addModal') document.getElementById('addModal').classList.remove('open');
+});
+
+document.getElementById('photoInput').addEventListener('change', async e => {
+  const file = e.target.files[0];
+  e.target.value = '';
+  if (!file) {
+    pendingNewDomicilio = false;
+    pendingPhotoTargetId = null;
+    return;
+  }
+  const dataUrl = await compressImage(file);
+
+  if (pendingNewDomicilio) {
+    pendingNewDomicilio = false;
+    document.getElementById('addModal').classList.remove('open');
+    await addDomicilio(dataUrl, pendingTimestamp);
+    pendingTimestamp = null;
+    return;
+  }
+
+  const targetId = pendingPhotoTargetId;
+  pendingPhotoTargetId = null;
+  if (!targetId) return;
+  await savePhoto(targetId, dataUrl);
+  setFotoFlag(targetId, true);
+  render();
+  if (activeTab() === 'recibos') renderRecibos();
+  if (photoModalOpenId === targetId) await openPhotoModal(targetId);
+  showToast('Foto guardada ✅');
+});
+
+/* ---------- Configuración ---------- */
+
+const settingsModal = document.getElementById('settingsModal');
+document.getElementById('settingsBtn').addEventListener('click', () => {
+  document.getElementById('inputValor').value = state.config.valorDomicilio;
+  document.getElementById('inputBono').value = state.config.bonoMensual;
+  document.getElementById('inputMeta').value = state.config.metaMensual || 0;
+  settingsModal.classList.add('open');
+});
+document.getElementById('cancelSettings').addEventListener('click', () => settingsModal.classList.remove('open'));
+settingsModal.addEventListener('click', e => { if (e.target === settingsModal) settingsModal.classList.remove('open'); });
+document.getElementById('saveSettings').addEventListener('click', () => {
+  const valor = parseInt(document.getElementById('inputValor').value, 10);
+  const bono = parseInt(document.getElementById('inputBono').value, 10);
+  if (!isNaN(valor) && valor >= 0) state.config.valorDomicilio = valor;
+  if (!isNaN(bono) && bono >= 0) state.config.bonoMensual = bono;
+  const meta = parseInt(document.getElementById('inputMeta').value, 10);
+  if (!isNaN(meta) && meta >= 0) state.config.metaMensual = meta;
+  saveState();
+  settingsModal.classList.remove('open');
+  render();
+  if (activeTab() === 'stats') renderStats();
+});
+
+document.getElementById('themeBtn').addEventListener('click', () => {
+  state.config.theme = state.config.theme === 'dark' ? 'light' : 'dark';
+  saveState();
+  applyTheme();
+});
+
+/* ---------- Respaldo: exportar / importar ---------- */
+
+async function collectPhotos() {
+  const photos = {};
+  for (const key of Object.keys(state.registros)) {
+    for (const r of state.registros[key]) {
+      if (r.foto) {
+        try {
+          const dataUrl = await getPhoto(r.id);
+          if (dataUrl) photos[r.id] = dataUrl;
+        } catch (e) {}
+      }
+    }
+  }
+  return photos;
+}
+
+document.getElementById('exportBtn').addEventListener('click', async () => {
+  showToast('Preparando respaldo...');
+  const photos = await collectPhotos();
+  const data = {
+    app: 'farmanorte-domicilios',
+    version: 1,
+    exportedAt: new Date().toISOString(),
+    state,
+    photos,
+  };
+  const blob = new Blob([JSON.stringify(data)], { type: 'application/json' });
+  const a = document.createElement('a');
+  const f = new Date();
+  const fecha = `${f.getFullYear()}-${String(f.getMonth() + 1).padStart(2, '0')}-${String(f.getDate()).padStart(2, '0')}`;
+  a.href = URL.createObjectURL(blob);
+  a.download = `respaldo-domicilios-${fecha}.json`;
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 5000);
+  showToast('Respaldo descargado ✅ Guárdalo en un lugar seguro');
+});
+
+document.getElementById('importBtn').addEventListener('click', () => {
+  document.getElementById('importFile').click();
+});
+
+document.getElementById('importFile').addEventListener('change', async e => {
+  const file = e.target.files[0];
+  e.target.value = '';
+  if (!file) return;
+  let data;
+  try {
+    data = JSON.parse(await file.text());
+  } catch (err) {
+    showToast('Ese archivo no es un respaldo válido');
+    return;
+  }
+  if (!data || data.app !== 'farmanorte-domicilios' || !data.state || !data.state.registros) {
+    showToast('Ese archivo no es un respaldo válido');
+    return;
+  }
+  if (!confirm('Esto reemplazará TODOS los datos actuales por los del respaldo. ¿Continuar?')) return;
+  state = data.state;
+  state.config = Object.assign({ valorDomicilio: 1500, bonoMensual: 170000, metaMensual: 0, theme: 'light' }, state.config);
+  saveState();
+  if (data.photos) {
+    for (const id of Object.keys(data.photos)) {
+      try { await savePhoto(id, data.photos[id]); } catch (err) {}
+    }
+  }
+  applyTheme();
+  viewedMonth = currentMonthKey();
+  settingsModal.classList.remove('open');
+  render();
+  if (activeTab() === 'recibos') renderRecibos();
+  if (activeTab() === 'stats') renderStats();
+  showToast('Respaldo restaurado ✅');
+});
+
+/* ---------- Informe del mes (imprimir / guardar PDF) ---------- */
+
+document.getElementById('reportBtn').addEventListener('click', async () => {
+  const registros = getRegistros(viewedMonth);
+  if (registros.length === 0) {
+    showToast('No hay domicilios en este mes para el informe');
+    return;
+  }
+  showToast('Generando informe...');
+  const valorUnit = state.config.valorDomicilio;
+  const bono = state.config.bonoMensual;
+  const subtotal = registros.length * valorUnit;
+  const total = subtotal + bono;
+  const logoSrc = document.querySelector('.header-logo').src;
+
+  let rows = '';
+  registros.forEach((r, i) => {
+    const d = new Date(r.timestamp);
+    const fecha = d.toLocaleDateString('es-CO', { day: '2-digit', month: '2-digit', year: 'numeric' });
+    const hora = d.toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit' });
+    rows += `<tr><td>${i + 1}</td><td>${fecha}</td><td>${hora}</td><td>${r.foto ? 'Sí' : 'No'}</td></tr>`;
+  });
+
+  let photosHtml = '';
+  for (const r of registros) {
+    if (!r.foto) continue;
+    try {
+      const dataUrl = await getPhoto(r.id);
+      if (dataUrl) {
+        const d = new Date(r.timestamp);
+        const lbl = d.toLocaleString('es-CO', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
+        photosHtml += `<div class="rep-photo"><img src="${dataUrl}" alt="Recibo"><span>${lbl}</span></div>`;
+      }
+    } catch (e) {}
+  }
+
+  const quien = session && session.name ? session.name : '';
+  document.getElementById('reportView').innerHTML = `
+    <div class="rep-head">
+      <img src="${logoSrc}" alt="Farmanorte">
+      <div>
+        <h1>Liquidación de domicilios · ${monthLabel(viewedMonth)}</h1>
+        <p>Farmanorte${quien ? ' · Domiciliario: ' + quien : ''}</p>
+      </div>
+    </div>
+    <table class="rep-table">
+      <thead><tr><th>#</th><th>Fecha</th><th>Hora</th><th>Recibo</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>
+    <div class="rep-totals">
+      <p>Domicilios realizados: <strong>${registros.length}</strong></p>
+      <p>Valor por domicilio: <strong>${formatCOP(valorUnit)}</strong></p>
+      <p>Subtotal domicilios: <strong>${formatCOP(subtotal)}</strong></p>
+      <p>Bono rodamiento: <strong>${formatCOP(bono)}</strong></p>
+      <p>Total a recibir: <strong>${formatCOP(total)}</strong></p>
+    </div>
+    ${photosHtml ? '<h2 style="font-size:.9rem">Recibos del mes</h2><div class="rep-photos">' + photosHtml + '</div>' : ''}
+    <p class="rep-foot">Generado el ${new Date().toLocaleString('es-CO')} con la app Mis Domicilios.</p>
+  `;
+  settingsModal.classList.remove('open');
+  setTimeout(() => window.print(), 300);
+});
+
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').catch(() => {});
+  });
+}
+
+if (session && session.name) {
+  showApp();
+} else {
+  document.getElementById('loginScreen').style.display = 'flex';
+}
+</script>
+</body>
+</html>
